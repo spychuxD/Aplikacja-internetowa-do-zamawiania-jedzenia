@@ -1,0 +1,245 @@
+<template>
+  <v-app>
+    <v-app-bar app hide-on-scroll>
+      <v-tabs class="text--secondary">
+        <v-tab v-for="(item, index) in mainTabs" :key="index" :to="item.path">
+          <font-awesome-icon :icon="item.icon" class="mr-3"/>
+          <span>{{item.text}}</span>
+        </v-tab>
+      </v-tabs>
+      <v-spacer></v-spacer>
+      <v-menu offset-y>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn v-if="isUser" v-bind="attrs" v-on="on">
+            <v-icon>mdi-account</v-icon>
+          </v-btn>
+        </template>
+        <v-list dense>
+          <v-list-item v-for="(item, index) in mainTabs" :key="index">
+            <v-list-item-title>{{ item.text }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+      <v-dialog v-model="dialog" persistent :max-width="$vuetify.breakpoint.thresholds.sm">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn text color="primary" v-if="!isUser" v-bind="attrs" v-on="on">
+              <font-awesome-icon icon="fa-solid fa-right-to-bracket" class="mr-3"/>
+              LOGOWANIE/REJESTRACJA
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-title  class="pa-0">
+              <v-tabs v-model="tabIndex" class="secondary">
+                <v-tab>Logowanie</v-tab>
+                <v-tab>Rejestracja</v-tab>
+              </v-tabs>
+            </v-card-title>
+            <v-tabs-items v-model="tabIndex">
+              <v-tab-item>
+                <v-form @submit.prevent="handleSubmitLogin">
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="6">
+                          <v-img src="https://i.ibb.co/f1Qr5B2/logo-transparent.png" max-width="300"></v-img>
+                        </v-col>
+                        <v-col cols="6">
+                          <v-text-field outlined v-model="userLogin.email" label="Email"></v-text-field>
+                          <v-text-field outlined v-model="userLogin.password" label="Hasło" type="password"></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text @click="dialog = false">
+                      <font-awesome-icon size="lg" icon="fa-solid fa-xmark" class="mr-2"/>
+                      Zamknij
+                    </v-btn>
+                    <v-btn text @click="handleSubmitLogin()">
+                      <font-awesome-icon size="lg" icon="fa-solid fa-right-to-bracket" class="mr-2"/>
+                      Zaloguj
+                    </v-btn>
+                  </v-card-actions>
+                </v-form>
+              </v-tab-item>
+              <v-tab-item>
+                <v-form @submit.prevent="handleSubmitRegister">
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col class="col-12">
+                          <v-divider class="primary"></v-divider>
+                          <div class="text-center ma-3">
+                            DANE PODSTAWOWE
+                          </div>
+                          <v-divider class="primary"></v-divider>
+                        </v-col>
+                        <v-col class="col-12">
+                          <v-text-field v-model="userRegister.email" label="Email"></v-text-field>
+                        </v-col>
+                        <v-col class="col-6">
+                          <v-text-field v-model="userRegister.password" label="Hasło" type="password"></v-text-field>
+                          <v-text-field v-model="userRegister.name" label="Imię"></v-text-field>
+                          <v-text-field v-model="userRegister.phoneNumber" label="Numer telefonu"></v-text-field>
+                        </v-col>
+                        <v-col class="col-6">
+                          <v-text-field v-model="userRegister.repeatPassword" label="Powtórz hasło" type="password"></v-text-field>
+                          <v-text-field v-model="userRegister.surname" label="Nazwisko"></v-text-field>
+                        </v-col>
+                        <v-col class="col-12">
+                          <v-divider class="primary"></v-divider>
+                          <div class="text-center ma-3">
+                            ADRES
+                          </div>
+                          <v-divider class="primary"></v-divider>
+                        </v-col>
+                        <v-col class="col-6">
+                          <v-text-field v-model="userRegister.street" label="Ulica"></v-text-field>
+                        </v-col>
+                        <v-col class="col-3">
+                          <v-text-field v-model="userRegister.parcelNumber" label="Numer domu"></v-text-field>
+                        </v-col>
+                        <v-col class="col-3">
+                          <v-text-field v-model="userRegister.apartmentNumber" label="Numer mieszkania"></v-text-field>
+                        </v-col>
+                        <v-col class="col-3">
+                          <v-text-field v-model="userRegister.postcode" label="Kod pocztowy"></v-text-field>
+                        </v-col>
+                        <v-col class="col-6">
+                          <v-text-field v-model="userRegister.city" label="Miasto"></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text @click="dialog = false">
+                      <font-awesome-icon size="lg" icon="fa-solid fa-xmark" class="mr-2"/>
+                      Zamknij
+                    </v-btn>
+                    <v-btn text @click="handleSubmitRegister()">
+                      <font-awesome-icon size="lg" icon="fa-solid fa-right-to-bracket" class="mr-2"/>
+                      Zarejestruj
+                    </v-btn>
+                  </v-card-actions>
+                </v-form>
+              </v-tab-item>
+            </v-tabs-items>
+          </v-card>
+        </v-dialog>
+    </v-app-bar>
+
+    <!-- Sizes your content based upon application components -->
+    <v-main>
+      <!-- Provides the application the proper gutter -->
+      <v-container fluid>
+        <!-- If using vue-router -->
+        <v-slide-y-transition mode="out-in">
+          <router-view class="py-8"></router-view>
+        </v-slide-y-transition>
+      </v-container>
+    </v-main>
+
+    <v-footer app class="pa-0">
+      <v-card width="100%" class="text-center" color="secondary">
+        <v-card-text class="pa-1">
+          <v-row>
+            <v-col class="col-3"></v-col>
+            <v-spacer></v-spacer>
+            <v-col class="col-3">
+              <v-tabs hide-slider class="text--secondary">
+                <v-tab :ripple="false" v-for="(item, index) in mainTabs" :key="index" :to="item.path">
+                  <span>{{item.text}}</span>
+                </v-tab>
+              </v-tabs>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-text class="pa-1">
+          <span :style="'color: ' + footerTextColor">web-app-vue2 | 1.0.0</span>
+        </v-card-text>
+      </v-card>
+    </v-footer>
+  </v-app>
+</template>
+
+<script>
+import {login, register} from "@/functions/common";
+
+  export default {
+    name: 'MainLayout',
+
+    data() {
+      return {
+        footerTextColor: null,
+        mainTabs: [
+          {value: 1, text:'Restauracje', icon: 'fa-solid fa-utensils', path: '/restaurants'},
+          {value: 2, text:'Dostawa', icon: 'fa-solid fa-person-biking', path: '/test'},
+          {value: 3, text:'Kontakt', icon: 'fa-solid fa-phone-flip', path: '/test'},
+          {value: 4, text:'Konfiguracja', icon: 'fa-solid fa-screwdriver-wrench', path: '/test'}
+        ],
+        isUser: false,
+        dialog: false,
+        tabIndex: 0,
+        userLogin: {
+          email: '',
+          password: '',
+        },
+        userRegister: {
+          email: '',
+          password: '',
+          repeatPassword: '',
+          name: '',
+          surname: '',
+          phoneNumber: '',
+          street: '',
+          parcelNumber: '',
+          apartmentNumber: '',
+          postcode: '',
+          city: '',
+        },
+        loggedUser: '',
+      }
+    },
+    created() {
+      this.footerTextColor = this.$vuetify.theme.themes.light.primary
+      if(this.$cookie.get('token')) {
+        this.isUser = true
+        this.loggedUser = this.userLogin.email
+      }
+    },
+    methods: {
+      handleSubmitLogin() {
+        this.logIn()
+        this.dialog = false
+      },
+      handleSubmitRegister() {
+        this.signUp()
+        this.dialog = false
+      },
+      async signUp() {
+        const email = this.userRegister.email;
+        const password = this.userRegister.password;
+
+        const response = await register(email, password);
+        if(response === 0) {
+          this.tabIndex = 0
+        }
+      },
+      async logIn() {
+        const email = this.userLogin.email;
+        const password = this.userLogin.password;
+
+        const response = await login(email, password);
+        if(response != -1) {
+          this.$cookie.set('token', response, 1)
+          this.isUser = true
+          this.loggedUser = this.userLogin.email
+        }
+      }
+
+    }
+  }
+</script>
