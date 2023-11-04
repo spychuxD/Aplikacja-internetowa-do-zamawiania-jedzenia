@@ -1,0 +1,92 @@
+// Globals
+$body-font-family: 'Roboto', serif;
+//$border-radius-root: 6px;
+$font-size-root: 18px;
+
+$material-light: (
+        'app-bar': #321F28,
+        'buttons': (
+                'disabled': rgba(#E79E4F, 0.26),
+                'focused': rgba(#E79E4F, 0.12),
+                'focused-alt': rgba(#E79E4F, 0.6),
+                'pressed': rgba(#E79E4F, 0.4)
+        ),
+        'dividers': #734046,
+        'text-color': #321F28,
+        'tabs': white,
+        'fg-color': #321F28,
+        'text': (
+                'theme': #E79E4F,
+                'primary': #E79E4F,
+                'secondary': #321F28,
+                'disabled': rgba(#E79E4F, 0.38),
+                'link': #2196F3,
+                'link-hover': gray
+        ),
+        'cards': white,
+        'inputs': (
+                'box': rgba(#321F28, 0.04),
+                'solo-inverted': rgba(#321F28, 0.06),
+                'solo-inverted-focused': #321F28,
+                'solo-inverted-focused-label': rgba(#321F28, 0.7),
+                'solo-inverted-focused-placeholder': rgba(#321F28, 0.5),
+                'solo-inverted-focused-text': #321F28
+        ),
+        'text-fields': (
+                'filled': rgba(#321F28, 0.06),
+                'filled-hover': rgba(#321F28, 0.12),
+                'outlined': rgba(#321F28, 0.38),
+                'outlined-disabled': rgba(#321F28, 0.26),
+                'outlined-hover': rgba(#321F28, 0.86)
+        ),
+        'input-bottom-line': #321F28,
+        'expansion-panels': (
+                'focus': #E79E4F
+        ),
+        'table': (
+                'active': rgba(#E79E4F, 0.5),
+                'hover': rgba(#E79E4F, 0.5),
+                'group': #E79E4F
+        )
+);
+
+$material-dark: (
+        'app-bar': #321F28,
+        'buttons': (
+                'disabled': rgba(#E79E4F, 0.26),
+                'focused': rgba(#E79E4F, 0.12),
+                'focused-alt': rgba(#E79E4F, 0.6),
+                'pressed': #734046
+        ),
+        'dividers': #E79E4F,
+        'text-color': #E79E4F,
+        'tabs': white,
+        'fg-color': #321F28,
+        'text': (
+                'theme': #E79E4F,
+                'primary': rgba(#321F28, 0.87),
+                'secondary': rgba(#321F28, 0.6),
+                'disabled': rgba(#E79E4F, 0.38),
+                'link': #2196F3,
+                'link-hover': gray
+        ),
+        'cards': white,
+        'inputs': (
+                'box': rgba(#321F28, 0.04),
+                'solo-inverted': rgba(#321F28, 0.06),
+                'solo-inverted-focused': #321F28,
+                'solo-inverted-focused-label': rgba(#321F28, 0.7),
+                'solo-inverted-focused-placeholder': rgba(#321F28, 0.5),
+                'solo-inverted-focused-text': #321F28
+        ),
+        'text-fields': (
+                'filled': rgba(#321F28, 0.06),
+                'filled-hover': rgba(#321F28, 0.12),
+                'outlined': rgba(#321F28, 0.38),
+                'outlined-disabled': rgba(#321F28, 0.26),
+                'outlined-hover': rgba(#321F28, 0.86)
+        ),
+        'input-bottom-line': #321F28,
+);
+
+$tabs-bar-background-color: #734046;
