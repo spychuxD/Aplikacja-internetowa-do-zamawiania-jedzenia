@@ -14,6 +14,12 @@ const store = new Vuex.Store({
             dishId: 0,
             dishIngridientModalReturn: null,
         },
+        info: {
+            text: '',
+            showing: false,
+            timeout: 5000,
+            color: 'info'
+        },
         cart: []
     },
     mutations: {
@@ -22,6 +28,12 @@ const store = new Vuex.Store({
         },
         setIdDish(state, id) {
             state.modal.idDish = id
+        },
+        setTextInfo(state, value) {
+            state.info.text = value
+        },
+        openInfo(state, boolean) {
+            state.info.showing = boolean
         }
     }
 })

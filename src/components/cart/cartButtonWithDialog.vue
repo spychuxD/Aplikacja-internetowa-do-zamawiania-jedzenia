@@ -1,7 +1,7 @@
 <template>
   <v-tooltip top>
     <template v-slot:activator="{ on, attrs }">
-      <v-btn v-bind="attrs" v-on="on" :disabled="cart.length === 0" rounded style="position: fixed; bottom: 100px; right: 10px; z-index: 10; padding: 24px;" @click="dialog = true">
+      <v-btn v-bind="attrs" v-on="on" :disabled="cart.length === 0" rounded style="position: fixed; bottom: 100px; z-index: 10; padding: 24px;" @click="dialog = true">
         <div>{{totalPrice.toFixed(2)}}zł</div>
         <v-icon class="ml-3" size="30" color="primary">mdi-cart</v-icon>
       </v-btn>

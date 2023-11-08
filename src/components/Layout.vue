@@ -162,6 +162,14 @@
         </v-card-text>
       </v-card>
     </v-footer>
+    <v-snackbar :color="$store.state.info.color" right bottom v-model="$store.state.info.showing" :timeout="$store.state.info.timeout">
+      {{$store.state.info.text}}
+      <template v-slot:action="{ attrs }">
+        <v-btn text v-bind="attrs" @click="closeInfo()" color="primary">
+          Zamknij
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -215,6 +223,12 @@ import {login, register} from "@/functions/common";
         this.logIn()
         this.dialog = false
       },
+      closeInfo() {
+        this.$store.state.info.text = ''
+        this.$store.state.info.timeout = 3000
+        this.$store.state.info.color = 'info'
+        this.$store.state.info.showing = false
+      },
       handleSubmitRegister() {
         this.signUp()
         this.dialog = false
@@ -233,10 +247,19 @@ import {login, register} from "@/functions/common";
         const password = this.userLogin.password;
 
         const response = await login(email, password);
-        if(response != -1) {
+        if(response !== -1) {
           this.$cookie.set('token', response, 1)
           this.isUser = true
           this.loggedUser = this.userLogin.email
+          this.$store.state.info.showing = false
+          this.$store.state.info.text = 'Pomyślnie zalogowano'
+          this.$store.state.info.color = 'success'
+          this.$store.state.info.showing = true
+        } else {
+          this.$store.state.info.showing = false
+          this.$store.state.info.text = 'Niepoprawne dane logowania'
+          this.$store.state.info.color = 'error'
+          this.$store.state.info.showing = true
         }
       }
 

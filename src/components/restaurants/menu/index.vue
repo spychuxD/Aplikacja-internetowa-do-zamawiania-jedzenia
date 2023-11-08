@@ -58,6 +58,9 @@
             </v-card-title>
           </v-img>
         </v-card>
+        <v-card>
+          <google-maps></google-maps>
+        </v-card>
         <cart-component :cart="$store.state.cart" :add-item="addItem" :remove-item="removeItem" :delete-item="deleteItem"></cart-component>
         <v-card class="mt-3">
           <v-card-title class="secondary text-overline">
@@ -84,15 +87,16 @@
 </template>
 
 <script>
-import {getListItemsOrItem} from "@/functions/common";
+import {getImg, getListItemsOrItem} from "@/functions/common";
 import dishIngridientModal from '../../dish/dishIngridientModal.vue'
 import cartButtonWithDialog from '../../cart/cartButtonWithDialog.vue'
 import cartComponent from '../../cart/cart.vue'
+import googleMaps from '../../GoogleMaps.vue'
 
   export default {
     name: 'restaurantMenu',
     components: {
-      dishIngridientModal, cartButtonWithDialog, cartComponent
+      dishIngridientModal, cartButtonWithDialog, cartComponent, googleMaps
     },
     data() {
       return {
@@ -114,14 +118,15 @@ import cartComponent from '../../cart/cart.vue'
     },
     created() {
       this.idRestaurant = this.$route.params.id
-      this.fetchData()
+      // this.fetchData()
     },
     methods: {
       async fetchData() {
         this.loading = true
-        this.restaurantCategoriesWithDishes = await getListItemsOrItem('dishes', this.idRestaurant)
-        const response = await getListItemsOrItem('restaurant', this.idRestaurant)
+        // this.restaurantCategoriesWithDishes = await getListItemsOrItem('dishes', this.idRestaurant)
+        const response = await getListItemsOrItem('restaurant', this.idRestaurant, this.$cookie.get('token'))
         this.restaurant = response[0]
+        await getImg('restaurant', this.restaurant.fileName, this.$cookie.get('token'))
         this.loading = false
       },
       imageLoadedFn() {
