@@ -9,48 +9,45 @@ import debounce from 'v-debounce'
 import VueCookie from 'vue-cookie'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import VueGeolocation from 'vue-browser-geolocation'
+import * as VueGoogleMaps from 'vue2-google-maps'
 import { faUtensils, faScrewdriverWrench, faPhoneFlip, faPersonBiking, faRightToBracket, faXmark, faUser, faLocationDot, faClock} from '@fortawesome/free-solid-svg-icons'
 library.add(faUtensils, faScrewdriverWrench, faPhoneFlip, faPersonBiking, faRightToBracket, faXmark, faUser, faLocationDot, faClock);
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(VueCookie)
 Vue.use(debounce)
-import VueGeolocation from 'vue-browser-geolocation';
-Vue.use(VueGeolocation);
-import { directive } from 'v-debounce'
+Vue.use(VueGeolocation)
+import Geocoder from "@pderas/vue2-geocoder"
 
+import { directive } from 'v-debounce'
+Vue.use(Geocoder, {
+  defaultCountryCode: 'PL', // e.g. 'CA'
+  defaultLanguage:    'pl', // e.g. 'en'
+  defaultMode:        'address', // or 'lat-lng'
+  googleMapsApiKey:   'AIzaSyD40ckrPhTz4c1PvOQxx2VWPMV_Znb_B2o'
+})
 export default {
   directives: {
     debounce: directive
   }
 }
 
-import * as VueGoogleMaps from 'vue2-google-maps'
-
 Vue.use(VueGoogleMaps, {
   load: {
-    key: 'AIzaSyD40ckrPhTz4c1PvOQxx2VWPMV_Znb_B2o',
-    libraries: 'places', // This is required if you use the Autocomplete plugin
-    // OR: libraries: 'places,drawing'
-    // OR: libraries: 'places,drawing,visualization'
-    // (as you require)
-
-    //// If you want to set the version, you can do so:
-    // v: '3.26',
+    key: 'AIzaSyD40ckrPhTz4c1PvOQxx2VWPMV_Znb_B2o'
+    // libraries: 'places', // This is required if you use the Autocomplete plugin
   },
-
-  //// If you intend to programmatically custom event listener code
-  //// (e.g. `this.$refs.gmap.$on('zoom_changed', someFunc)`)
-  //// instead of going through Vue templates (e.g. `<GmapMap @zoom_changed="someFunc">`)
-  //// you might need to turn this on.
-  // autobindAllEvents: false,
-
-  //// If you want to manually install components, e.g.
-  //// import {GmapMarker} from 'vue2-google-maps/src/components/marker'
-  //// Vue.component('GmapMarker', GmapMarker)
-  //// then set installComponents to 'false'.
-  //// If you want to automatically install all the components this property must be set to 'true':
   installComponents: true
 })
+
+if (!VueCookie.get('token')) {
+  router.push('/home')
+}
+if (VueCookie.get('token')) {
+  router.push('/restaurants')
+}
+
+
 
 new Vue({
   store,

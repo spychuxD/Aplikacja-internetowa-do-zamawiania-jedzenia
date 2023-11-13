@@ -6,6 +6,7 @@ import Router from 'vue-router';
 import Layout from '../components/Layout'
 import RestaurantMenu from '../components/restaurants/menu/index'
 import Restaurants from '../components/restaurants/index'
+import HomePage from '../components/home/index'
 import ErrorView404 from '../components/errors/error404'
 
 Vue.use(Router);
@@ -17,6 +18,13 @@ export default new Router({
       path: '/',
       component: Layout,
       children: [
+        {
+          path: '/home',
+          meta: {
+            title: 'Strona Główna'
+          },
+          component: HomePage
+        },
         {
           path: '/restaurants',
           meta: {

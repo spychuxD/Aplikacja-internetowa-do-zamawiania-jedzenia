@@ -2,17 +2,18 @@
   <div>
     <GmapMap
         map-type-id="terrain"
-        :center="{lat: coordinates.lat, lng: coordinates.lng}"
-        :zoom="15"
-        style="height: 300px"
+        :center="mapCoordinates"
+        :zoom="12"
+        :style='"height: " + height + "px"'
+        ref="mapRef"
     >
       <GmapMarker
-          label="R"
-          :position="center"
+          v-for="(restaurantCoordinates, index) in markers"
+          :key="index"
+          :position="restaurantCoordinates"
           :clickable="true"
-          :draggable="true"
-          @click="center={lat: coordinates.lat, lng: coordinates.lng}"
       />
+
 <!--      <GmapMarker-->
 <!--          :position="center"-->
 <!--          :clickable="true"-->
@@ -29,28 +30,70 @@ export default {
   name: 'googleMaps',
   data() {
     return {
-      center: {
-        lat: 0,
-        lng: 0
+      map: null,
+      markers: [],
+      restaurantCoordinates: {
+        lat: null,
+        lng: null
       },
-      coordinates: {
-        apiKey: 'AIzaSyD40ckrPhTz4c1PvOQxx2VWPMV_Znb_B2o',
-        lat: 0,
-        lng: 0
+      mapCoordinates: {
+        lat: 50.88,
+        lng: 20.63
+      },
+      myCoordinates: {
+        lat: 50.88,
+        lng: 20.63
       }
     }
   },
+  props: {
+    height: {
+      type: Number,
+      required: true
+    },
+    addresses: {
+      type: Array,
+      required: true
+    }
+  },
+  created() {
+    if (this.addresses.length > 0) {
+      this.addresses.forEach(addressObj => {
+        this.$geocoder.send(addressObj, response => {
+          if (response.status === 'OK') {
+            if(response.results.length === 1) {
+              console.log(response.results[0].geometry.location)
+              this.markers.push({lng: response.results[0].geometry.location.lng, lat: response.results[0].geometry.location.lat})
+              console.log(this.markers)
+            }
+          }
+        });
+      })
+    }
+    // this.$getLocation().then(coordinates => {
+    //   this.myCoordinates.lat = coordinates.lat
+    //   this.myCoordinates.lng = coordinates.lng
+    // }).catch(error => alert(error))
+  },
   mounted() {
-    this.$getLocation().then(location => {
-      this.coordinates.lat = location.lat
-      this.center.lat = location.lat
-      this.coordinates.lng = location.lng
-      this.center.lng = location.lng
-      console.log(this.coordinates.lat)
-      console.log(this.coordinates.lng)
-    }).catch((error) => {
-      console.log(error)
-    })
+    this.$refs.mapRef.$mapPromise.then((mapObject) => {
+      this.map = mapObject
+    });
+  },
+  computed: {
+    // mapCoordinates() {
+    //   console.log(this.map)
+    //   if(!this.map) {
+    //     return {
+    //       lat: 50,
+    //       lng: 20
+    //     }
+    //   }
+    //   return {
+    //     lat: this.map.center.lat,
+    //     lng: this.map.center.lng
+    //   }
+    // }
   }
 }
 </script>

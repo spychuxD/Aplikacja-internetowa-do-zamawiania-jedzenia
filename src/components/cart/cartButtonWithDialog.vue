@@ -5,7 +5,7 @@
         <div>{{totalPrice.toFixed(2)}}zł</div>
         <v-icon class="ml-3" size="30" color="primary">mdi-cart</v-icon>
       </v-btn>
-      <v-dialog v-model="dialog" :max-width="$vuetify.breakpoint.thresholds.xs">
+      <v-dialog v-model="dialog" :max-width="$vuetify.breakpoint.thresholds.md">
         <v-card v-if="cart.length > 0">
           <v-card-title class="secondary text-overline">
             <v-icon color="primary">mdi-cart</v-icon>

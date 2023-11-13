@@ -1,6 +1,9 @@
 <template>
     <v-container fluid>
-      <v-card :loading="loading">
+      <v-card class="mt-3">
+        <google-maps :height="300" :addresses="restaurantsAddresses"></google-maps>
+      </v-card>
+      <v-card :loading="loading" class="mt-3">
         <v-card-title class="pa-0">
           <v-tabs v-model="tabIndex" class="secondary">
             <v-tab>Rstauracje</v-tab>
@@ -9,6 +12,46 @@
         </v-card-title>
         <v-tabs-items v-model="tabIndex">
           <v-tab-item>
+            <v-card-text >
+<!--              <v-row>-->
+<!--                <v-col class="col-3">-->
+<!--                  <v-img contain style="cursor: pointer;" :src="require('@/assets/restaurants/restauracja3.jpg')" max-height="300"></v-img>-->
+<!--                </v-col>-->
+<!--                <v-col class="col-6">-->
+<!--                  <v-carousel v-model="model" height="300" cycle hide-delimiters show-arrows-on-hover >-->
+<!--                    <v-carousel-item v-for="(restaurant, index) in restaurants" :key="index">-->
+<!--                      <v-img contain style="cursor: pointer;" :src="require('@/assets/restaurants/' + restaurant.fileName)" max-height="300"></v-img>-->
+<!--                    </v-carousel-item>-->
+<!--                  </v-carousel>-->
+<!--                </v-col>-->
+<!--                <v-col class="col-3">-->
+<!--                  <v-img contain style="cursor: pointer;" :src="require('@/assets/restaurants/restauracja5.jpg')" max-height="300"></v-img>-->
+<!--                </v-col>-->
+<!--              </v-row>-->
+<!--              <v-row>-->
+<!--                <v-col class="col-4">-->
+<!--                  <v-carousel v-model="model" height="300" cycle hide-delimiters show-arrows-on-hover >-->
+<!--                    <v-carousel-item v-for="i in 10" :key="i">-->
+<!--                      <v-img style="cursor: pointer;" src="https://i.ibb.co/C60Bx30/Sand-dunes-Sahara-Morocco-Merzouga.webp"></v-img>-->
+<!--                    </v-carousel-item>-->
+<!--                  </v-carousel>-->
+<!--                </v-col>-->
+<!--                <v-col class="col-4">-->
+<!--                  <v-carousel v-model="model" height="300" cycle hide-delimiters show-arrows-on-hover>-->
+<!--                    <v-carousel-item v-for="i in 10" :key="i">-->
+<!--                      <v-img style="cursor: pointer;" src="https://i.ibb.co/C60Bx30/Sand-dunes-Sahara-Morocco-Merzouga.webp"></v-img>-->
+<!--                    </v-carousel-item>-->
+<!--                  </v-carousel>-->
+<!--                </v-col>-->
+<!--                <v-col class="col-4">-->
+<!--                  <v-carousel v-model="model" height="300" cycle hide-delimiters show-arrows-on-hover>-->
+<!--                    <v-carousel-item v-for="i in 10" :key="i">-->
+<!--                      <v-img style="cursor: pointer;" src="https://i.ibb.co/C60Bx30/Sand-dunes-Sahara-Morocco-Merzouga.webp"></v-img>-->
+<!--                    </v-carousel-item>-->
+<!--                  </v-carousel>-->
+<!--                </v-col>-->
+<!--              </v-row>-->
+            </v-card-text>
             <v-card-text>
               <v-row class="text-center">
                 <v-col class="col-12">
@@ -27,7 +70,7 @@
                 <v-col v-for="(restaurant, index) in restaurants" class="col-sm-6 col-md-4 col-lg-2" :key="index">
                   <v-card class="pa-3">
                     <v-card-title class="pa-0">
-                      <v-img style="cursor: pointer;" :src="'C:/User/Spychu/Desktop/vueJsApp/web-app-vue2/src/assets/restaurants/' + restaurant.fileName" max-height="150px" @load="imageLoadedFn" @click="$router.push('/restaurant/'+restaurant.id+'/menu')">
+                      <v-img style="cursor: pointer;" :src="require('@/assets/restaurants/' + restaurant.fileName)" max-height="150px" @load="imageLoadedFn" @click="$router.push('/restaurant/'+restaurant.id+'/menu')">
                         <v-progress-circular v-if="!imageLoaded" indeterminate color="primary"></v-progress-circular>
                       </v-img>
                     </v-card-title>
@@ -82,17 +125,22 @@
   
 <script>
 import {getListItemsOrItem} from "@/functions/common";
-
+import googleMaps from '../GoogleMaps.vue'
   export default {
     name: 'RestaurantIndex',
+    components: {
+      googleMaps
+    },
     data() {
       return {
+        model: 0,
         delay: 300,
         imageLoaded: false,
         tabIndex: 0,
         restaurants: [],
         loading: true,
-        restaurantNames: []
+        restaurantNames: [],
+        restaurantsAddresses: []
       }
     },
     created() {
@@ -100,16 +148,11 @@ import {getListItemsOrItem} from "@/functions/common";
     },
     methods: {
       async fetchData() {
-        // axios.get('http://localhost:8000/restaurants', {
-        //   headers: {
-        //     'Authorization': 'Bearer ' + VueCookie.get('accessToken')
-        //   }
-        // })
         this.loading = true
-        console.log(this.$cookie.get('token'))
         this.restaurants = await getListItemsOrItem('restaurants', 0 , this.$cookie.get('token'))
         if(this.restaurants.length > 0) {
           this.restaurants.forEach(ele => {
+            this.restaurantsAddresses.push({address_line_1: ele.street + ' ' + ele.apartmentNumber + ' ' + ele.parcelNumber, address_line_2: '', city: ele.city, zip_code: ele.postcode})
             this.restaurantNames.push(ele.name)
           })
         }

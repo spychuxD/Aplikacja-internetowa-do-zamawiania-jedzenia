@@ -98,10 +98,30 @@ export async function getListItemsOrItem(name, id = 0, token) {
                 Authorization: `Bearer ${token}`
             }
         })
-    } else if (name === 'dishes' && id > 0) {
-        response = await axios.get('http://localhost:8000/dishes/' + id)
-    } else if (name === 'dishingridients/dish' && id > 0) {
-        response = await axios.get('http://localhost:8000/dishingridients/dish/' + id)
+    } else if (name === 'dishesByRestaurant' && id > 0) {
+        if(token === null) {
+            token = await axios.post('http://localhost:8000/api/login_check', {
+                username: 'root@root',
+                password: 'root'
+            });
+        }
+        response = await axios.get('http://localhost:8000/api/public/dishesByRestaurant/' + id, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    } else if (name === 'dishingridients' && id > 0) {
+        if(token === null) {
+            token = await axios.post('http://localhost:8000/api/login_check', {
+                username: 'root@root',
+                password: 'root'
+            });
+        }
+        response = await axios.get('http://localhost:8000/api/public/dishingridients/dish/' + id, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
     }
 
     if (response.status === 200) {

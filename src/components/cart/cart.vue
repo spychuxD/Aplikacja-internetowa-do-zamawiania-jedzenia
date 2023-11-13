@@ -19,23 +19,23 @@
     <template v-slot:actions>
       <v-icon color="scondary" class="ma-2">mdi-cart-arrow-up</v-icon>
     </template>
-    <v-card-text v-if="cart.length > 0" v-model="$store.state.cart" class="py-4 hidden-xs-only hidden-sm-only">
+    <v-card-text v-if="cart.length > 0" v-model="$store.state.cart" class="py-3 px-1 hidden-xs-only hidden-sm-only">
       <template v-for="(item, index) in cart">
-        <v-tooltip left :key="index">
+        <v-tooltip right :key="index">
           <template v-slot:activator="{ on, attrs }">
-            <v-list>
-              <v-list-item v-bind="attrs" v-on="on">
-                <v-list-item-avatar tile>
-                  <v-img src="https://i.ibb.co/f1Qr5B2/logo-transparent.png" @load="imageLoadedFn">
-                    <v-progress-circular v-if="!imageLoaded" indeterminate color="primary"></v-progress-circular>
-                  </v-img>
-                </v-list-item-avatar>
+            <v-list class="py-1">
+              <v-list-item class="px-2" dense v-bind="attrs" v-on="on">
+<!--                <v-list-item-avatar tile>-->
+<!--                  <v-img src="https://i.ibb.co/f1Qr5B2/logo-transparent.png" @load="imageLoadedFn">-->
+<!--                    <v-progress-circular v-if="!imageLoaded" indeterminate color="primary"></v-progress-circular>-->
+<!--                  </v-img>-->
+<!--                </v-list-item-avatar>-->
                 <v-list-item-content>
                   <v-list-item-title class="text-overline">
                     {{item.dishName}}
                   </v-list-item-title>
                   <v-list-item-subtitle class="text-caption">
-                    <v-row dense v-for="(ingrideintCategory, ingridientCategoryName) in item.ingridients" :key="ingridientCategoryName">
+                    <v-row v-for="(ingrideintCategory, ingridientCategoryName) in item.ingridients" :key="ingridientCategoryName">
                       <v-col class="col-12 ml-2">
                         {{ingridientCategoryName}}
                       </v-col>
@@ -59,7 +59,7 @@
                 </v-list-item-content>
                 <v-list-item-action>
                   <v-row dense>
-                    <v-col>
+                    <v-col class="pa-0">
                       <v-tooltip top>
                         <template v-slot:activator="{ on, attrs }">
                           <v-btn v-bind="attrs" v-on="on" :disabled="item.count === 1" icon color="accent" @click="removeItem(item)">
@@ -69,7 +69,7 @@
                         <span>Usuń danie</span>
                       </v-tooltip>
                     </v-col>
-                    <v-col>
+                    <v-col class="pa-0">
                       <v-tooltip top>
                         <template v-slot:activator="{ on, attrs }">
                           <v-btn icon v-bind="attrs" v-on="on">
@@ -79,7 +79,7 @@
                         <span>Ilość</span>
                       </v-tooltip>
                     </v-col>
-                    <v-col>
+                    <v-col class="pa-0">
                       <v-tooltip top>
                         <template v-slot:activator="{ on, attrs }">
                           <v-btn v-bind="attrs" v-on="on" icon color="accent" @click="addItem(item)">
@@ -89,7 +89,7 @@
                         <span>Dodaj danie</span>
                       </v-tooltip>
                     </v-col>
-                    <v-col>
+                    <v-col class="pa-0">
                       <v-tooltip top>
                         <template v-slot:activator="{ on, attrs }">
                           <v-btn v-bind="attrs" v-on="on" icon color="error" @click="deleteItem(item)">
@@ -99,7 +99,7 @@
                         <span>Usuń z listy</span>
                       </v-tooltip>
                     </v-col>
-                    <v-col>
+                    <v-col class="pa-0">
                       <v-tooltip top>
                         <template v-slot:activator="{ on, attrs }">
                           <v-btn v-bind="attrs" v-on="on" icon color="primary" @click.stop="showDishIngridientModal(item)">

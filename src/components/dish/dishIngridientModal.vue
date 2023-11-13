@@ -1,5 +1,5 @@
 <template>
-  <v-dialog persistent v-model="dishIngridientModal" :max-width="$vuetify.breakpoint.thresholds.xs">
+  <v-dialog persistent v-model="dishIngridientModal" :max-width="$vuetify.breakpoint.thresholds.md">
     <v-card>
       <v-card-title class="secondary text-overline">
         <v-icon color="primary">mdi-silverware</v-icon>
@@ -78,7 +78,7 @@ export default {
   methods: {
     async fetchData() {
       this.loading = true
-      this.dishIngridients = await getListItemsOrItem('dishingridients/dish', this.dishId)
+      this.dishIngridients = await getListItemsOrItem('dishingridients', this.dishId)
       this.loading = false
     },
     showModal () {
