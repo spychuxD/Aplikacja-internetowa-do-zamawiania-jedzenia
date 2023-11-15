@@ -17,7 +17,7 @@
             <v-radio
                 v-for="(ingridient, index) in ingridientCategory.ingridients"
                 :key="index"
-                :value="ingridient.ingridientName"
+                :value="ingridient"
                 :label="ingridient.ingridientName + ' (' + ingridient.price + ' zł)'"
             ></v-radio>
             <v-divider></v-divider>

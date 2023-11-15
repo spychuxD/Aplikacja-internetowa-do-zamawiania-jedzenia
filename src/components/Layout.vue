@@ -178,7 +178,6 @@ import {login, register} from "@/functions/common";
 
   export default {
     name: 'MainLayout',
-
     data() {
       return {
         footerTextColor: null,
@@ -255,6 +254,7 @@ import {login, register} from "@/functions/common";
           this.$store.state.info.text = 'Pomyślnie zalogowano'
           this.$store.state.info.color = 'success'
           this.$store.state.info.showing = true
+          window.location.reload(true)
         } else {
           this.$store.state.info.showing = false
           this.$store.state.info.text = 'Niepoprawne dane logowania'

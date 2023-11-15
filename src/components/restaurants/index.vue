@@ -3,11 +3,12 @@
       <v-card class="mt-3">
         <google-maps :height="300" :addresses="restaurantsAddresses"></google-maps>
       </v-card>
-      <v-card :loading="loading" class="mt-3">
+      <v-card :loading="loading" class="mt-3" flat>
         <v-card-title class="pa-0">
-          <v-tabs v-model="tabIndex" class="secondary">
-            <v-tab>Rstauracje</v-tab>
-            <v-tab>Sklepy</v-tab>
+          <v-tabs v-model="tabIndex" class="secondary" fixed-tabs>
+            <v-tab>Wszystkie</v-tab>
+            <v-tab>Najbliżej Ciebie</v-tab>
+            <v-tab>Najlepiej oceniane</v-tab>
           </v-tabs>
         </v-card-title>
         <v-tabs-items v-model="tabIndex">
@@ -70,7 +71,13 @@
                 <v-col v-for="(restaurant, index) in restaurants" class="col-sm-6 col-md-4 col-lg-2" :key="index">
                   <v-card class="pa-3">
                     <v-card-title class="pa-0">
-                      <v-img style="cursor: pointer;" :src="require('@/assets/restaurants/' + restaurant.fileName)" max-height="150px" @load="imageLoadedFn" @click="$router.push('/restaurant/'+restaurant.id+'/menu')">
+                      <v-img
+                          style="cursor: pointer;"
+                          :src="require('@/assets/restaurants/' + restaurant.fileName)"
+                          max-height="150px"
+                          @load="imageLoadedFn"
+                          @click="$router.push('/restaurant/'+restaurant.id+'/menu')"
+                      >
                         <v-progress-circular v-if="!imageLoaded" indeterminate color="primary"></v-progress-circular>
                       </v-img>
                     </v-card-title>
@@ -152,7 +159,8 @@ import googleMaps from '../GoogleMaps.vue'
         this.restaurants = await getListItemsOrItem('restaurants', 0 , this.$cookie.get('token'))
         if(this.restaurants.length > 0) {
           this.restaurants.forEach(ele => {
-            this.restaurantsAddresses.push({address_line_1: ele.street + ' ' + ele.apartmentNumber + ' ' + ele.parcelNumber, address_line_2: '', city: ele.city, zip_code: ele.postcode})
+            // this.restaurantsAddresses.push({address_line_1: ele.street + ' ' + ele.apartmentNumber + ' ' + ele.parcelNumber, address_line_2: '', city: ele.city, zip_code: ele.postcode})
+            this.restaurantsAddresses.push({address_line_1: ele.street , address_line_2: '', city: ele.city, zip_code: ele.postcode})
             this.restaurantNames.push(ele.name)
           })
         }

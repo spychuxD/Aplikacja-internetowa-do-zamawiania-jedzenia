@@ -13,13 +13,12 @@
           :position="restaurantCoordinates"
           :clickable="true"
       />
-
-<!--      <GmapMarker-->
-<!--          :position="center"-->
-<!--          :clickable="true"-->
-<!--          :draggable="true"-->
-<!--          @click="center={lat: coordinates.lat+0.1, lng: coordinates.lng}"-->
-<!--      />-->
+      <GmapMarker
+          v-if="isUserLocation"
+          :position="myCoordinates"
+          :clickable="true"
+          :icon="'https://i.ibb.co/8dgvJYX/home-account.png'"
+      />
     </GmapMap>
   </div>
 </template>
@@ -30,6 +29,7 @@ export default {
   name: 'googleMaps',
   data() {
     return {
+      icon: 'home-account.svg',
       map: null,
       markers: [],
       restaurantCoordinates: {
@@ -41,9 +41,10 @@ export default {
         lng: 20.63
       },
       myCoordinates: {
-        lat: 50.88,
-        lng: 20.63
-      }
+        lat: null,
+        lng: null
+      },
+      isUserLocation: false
     }
   },
   props: {
@@ -56,44 +57,41 @@ export default {
       required: true
     }
   },
+  watch: {
+    addresses: {
+      handler: 'geoCoder',
+      immediate: true,
+    },
+  },
   created() {
-    if (this.addresses.length > 0) {
-      this.addresses.forEach(addressObj => {
-        this.$geocoder.send(addressObj, response => {
-          if (response.status === 'OK') {
-            if(response.results.length === 1) {
-              console.log(response.results[0].geometry.location)
-              this.markers.push({lng: response.results[0].geometry.location.lng, lat: response.results[0].geometry.location.lat})
-              console.log(this.markers)
-            }
-          }
-        });
-      })
-    }
+    this.geoCoder(this.addresses)
+    this.getUserLocation()
     // this.$getLocation().then(coordinates => {
     //   this.myCoordinates.lat = coordinates.lat
     //   this.myCoordinates.lng = coordinates.lng
     // }).catch(error => alert(error))
   },
-  mounted() {
-    this.$refs.mapRef.$mapPromise.then((mapObject) => {
-      this.map = mapObject
-    });
-  },
-  computed: {
-    // mapCoordinates() {
-    //   console.log(this.map)
-    //   if(!this.map) {
-    //     return {
-    //       lat: 50,
-    //       lng: 20
-    //     }
-    //   }
-    //   return {
-    //     lat: this.map.center.lat,
-    //     lng: this.map.center.lng
-    //   }
-    // }
+  methods: {
+    geoCoder() {
+      if (this.addresses.length > 0) {
+        this.addresses.forEach(addressObj => {
+          this.$geocoder.send(addressObj, response => {
+            if (response.status === 'OK') {
+              if(response.results.length === 1) {
+                this.markers.push({lng: response.results[0].geometry.location.lng, lat: response.results[0].geometry.location.lat})
+              }
+            }
+          });
+        })
+      }
+    },
+    getUserLocation() {
+      let address = localStorage.getItem('address')
+      if(address) {
+        this.myCoordinates = JSON.parse(address)
+        this.isUserLocation = true
+      }
+    }
   }
 }
 </script>

@@ -72,7 +72,7 @@ export async function getImg(name, img, token) {
         console.log(response)
     }
 }
-export async function getListItemsOrItem(name, id = 0, token) {
+export async function getListItemsOrItem(name, id = 0, token = null) {
     let response
     if(name === 'restaurants' && id === 0) {
         if(token === null) {
