@@ -8,6 +8,8 @@ import RestaurantMenu from '../components/restaurants/menu/index'
 import Restaurants from '../components/restaurants/index'
 import HomePage from '../components/home/index'
 import ErrorView404 from '../components/errors/error404'
+import CartSummary from '@/components/cartSummary/index'
+import FavoriteRestaurants from '../components/restaurants/favorite/index'
 
 Vue.use(Router);
 
@@ -38,6 +40,20 @@ export default new Router({
             title: 'Menu restauracji'
           },
           component: RestaurantMenu
+        },
+        {
+          path: '/cartSummary',
+          meta: {
+            title: 'Podsumowanie zamówienia'
+          },
+          component: CartSummary
+        },
+        {
+          path: '/favoriteRestaurants',
+          meta: {
+            title: 'Ulubione restauracje'
+          },
+          component: FavoriteRestaurants
         }
       ]
     },

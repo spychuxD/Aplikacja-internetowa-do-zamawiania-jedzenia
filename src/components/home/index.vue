@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <carousel-restaurant :restaurants="restaurants"></carousel-restaurant>
+    <carousel-restaurant v-if="restaurants" :restaurants="restaurants"></carousel-restaurant>
     <address-input-home></address-input-home>
     <v-card class="mt-3">
       <div style="font-size: 64px" class="text-overline text-center">Korzystaj z systemu na różnych urządzeniach gdziekolwiek jesteś</div>

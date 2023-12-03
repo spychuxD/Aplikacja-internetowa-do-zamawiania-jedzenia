@@ -1,7 +1,7 @@
 <template>
     <v-container fluid>
       <v-card class="mt-3">
-        <google-maps :height="300" :addresses="restaurantsAddresses"></google-maps>
+<!--        <google-maps :height="300" :addresses="restaurantsAddresses"></google-maps>-->
       </v-card>
       <v-card :loading="loading" class="mt-3" flat>
         <v-card-title class="pa-0">
@@ -132,12 +132,12 @@
   
 <script>
 import {getListItemsOrItem} from "@/functions/common";
-import googleMaps from '../GoogleMaps.vue'
+// import googleMaps from '../GoogleMaps.vue'
   export default {
     name: 'RestaurantIndex',
-    components: {
-      googleMaps
-    },
+    // components: {
+    //   googleMaps
+    // },
     data() {
       return {
         model: 0,

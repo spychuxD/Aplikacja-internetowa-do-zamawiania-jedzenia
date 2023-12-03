@@ -15,7 +15,7 @@
           </v-btn>
         </template>
         <v-list dense>
-          <v-list-item v-for="(item, index) in mainTabs" :key="index">
+          <v-list-item v-for="(item, index) in userMenu" :key="index">
             <v-list-item-title>{{ item.text }}</v-list-item-title>
           </v-list-item>
         </v-list>
@@ -131,12 +131,12 @@
     </v-app-bar>
 
     <!-- Sizes your content based upon application components -->
-    <v-main>
+    <v-main style="background-color: #FDF5ED">
       <!-- Provides the application the proper gutter -->
-      <v-container fluid>
+      <v-container fluid style="background-color: #FDF5ED">
         <!-- If using vue-router -->
         <v-slide-y-transition mode="out-in">
-          <router-view class="py-8"></router-view>
+          <router-view style="background-color: #FDF5ED" class="py-8"></router-view>
         </v-slide-y-transition>
       </v-container>
     </v-main>
@@ -144,17 +144,17 @@
     <v-footer app class="pa-0">
       <v-card width="100%" class="text-center" color="secondary">
         <v-card-text class="pa-1">
-          <v-row>
-            <v-col class="col-3"></v-col>
-            <v-spacer></v-spacer>
-            <v-col class="col-3">
-              <v-tabs hide-slider class="text--secondary">
-                <v-tab :ripple="false" v-for="(item, index) in mainTabs" :key="index" :to="item.path">
-                  <span>{{item.text}}</span>
-                </v-tab>
-              </v-tabs>
-            </v-col>
-          </v-row>
+<!--          <v-row>-->
+<!--            <v-col class="col-3"></v-col>-->
+<!--            <v-spacer></v-spacer>-->
+<!--            <v-col class="col-3">-->
+<!--              <v-tabs hide-slider class="text&#45;&#45;secondary">-->
+<!--                <v-tab :ripple="false" v-for="(item, index) in mainTabs" :key="index" :to="item.path">-->
+<!--                  <span>{{item.text}}</span>-->
+<!--                </v-tab>-->
+<!--              </v-tabs>-->
+<!--            </v-col>-->
+<!--          </v-row>-->
         </v-card-text>
         <v-divider></v-divider>
         <v-card-text class="pa-1">
@@ -185,7 +185,11 @@ import {login, register} from "@/functions/common";
           {value: 1, text:'Restauracje', icon: 'fa-solid fa-utensils', path: '/restaurants'},
           {value: 2, text:'Dostawa', icon: 'fa-solid fa-person-biking', path: '/test'},
           {value: 3, text:'Kontakt', icon: 'fa-solid fa-phone-flip', path: '/test'},
-          {value: 4, text:'Konfiguracja', icon: 'fa-solid fa-screwdriver-wrench', path: '/test'}
+          {value: 4, text:'Konfiguracja', icon: 'fa-solid fa-screwdriver-wrench', path: '/test'},
+          {value: 5, text:'Ulubione', icon: 'fa-solid fa-heart', path: '/favoriteRestaurants'}
+        ],
+        userMenu: [
+          {value: 1, text:'Mój profil', path: '/restaurants'},
         ],
         isUser: false,
         dialog: false,
@@ -225,7 +229,6 @@ import {login, register} from "@/functions/common";
       closeInfo() {
         this.$store.state.info.text = ''
         this.$store.state.info.timeout = 3000
-        this.$store.state.info.color = 'info'
         this.$store.state.info.showing = false
       },
       handleSubmitRegister() {

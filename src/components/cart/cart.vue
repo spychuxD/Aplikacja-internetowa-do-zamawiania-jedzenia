@@ -6,7 +6,7 @@
       <v-spacer></v-spacer>
       <v-tooltip top>
         <template v-slot:activator="{ on, attrs }">
-          <v-chip v-bind="attrs" v-on="on" color="primary">
+          <v-chip v-bind="attrs" v-on="on" color="primary" @click="$router.push('/cartSummary')">
             <v-icon class="mr-2">mdi-cash</v-icon>
             <span style="font-weight: 900">{{totalPrice.toFixed(2)}}
               <span style="font-weight: 600">zł</span>
@@ -16,9 +16,9 @@
         <span>Całkowity koszt</span>
       </v-tooltip>
     </v-card-title>
-    <template v-slot:actions>
-      <v-icon color="scondary" class="ma-2">mdi-cart-arrow-up</v-icon>
-    </template>
+<!--    <template v-slot:actions>-->
+<!--      <v-icon color="scondary" class="ma-2">mdi-cart-arrow-up</v-icon>-->
+<!--    </template>-->
     <v-card-text v-if="cart.length > 0" v-model="$store.state.cart" class="py-3 px-1 hidden-xs-only hidden-sm-only">
       <template v-for="(item, index) in cart">
         <v-tooltip right :key="index">
@@ -37,36 +37,36 @@
                 </v-list-item-content>
                 <v-list-item-action>
                   <v-row dense>
-<!--                    <v-col class="pa-0">-->
-<!--                      <v-tooltip top>-->
-<!--                        <template v-slot:activator="{ on, attrs }">-->
-<!--                          <v-btn v-bind="attrs" v-on="on" :disabled="item.count === 1" icon color="accent" @click="removeItem(item)">-->
-<!--                            <v-icon color="accent">mdi-minus-box</v-icon>-->
-<!--                          </v-btn>-->
-<!--                        </template>-->
-<!--                        <span>Usuń danie</span>-->
-<!--                      </v-tooltip>-->
-<!--                    </v-col>-->
-<!--                    <v-col class="pa-0">-->
-<!--                      <v-tooltip top>-->
-<!--                        <template v-slot:activator="{ on, attrs }">-->
-<!--                          <v-btn icon v-bind="attrs" v-on="on">-->
-<!--                            {{item.count}}-->
-<!--                          </v-btn>-->
-<!--                        </template>-->
-<!--                        <span>Ilość</span>-->
-<!--                      </v-tooltip>-->
-<!--                    </v-col>-->
-<!--                    <v-col class="pa-0">-->
-<!--                      <v-tooltip top>-->
-<!--                        <template v-slot:activator="{ on, attrs }">-->
-<!--                          <v-btn v-bind="attrs" v-on="on" icon color="accent" @click="addItem(item)">-->
-<!--                            <v-icon color="accent">mdi-plus-box</v-icon>-->
-<!--                          </v-btn>-->
-<!--                        </template>-->
-<!--                        <span>Dodaj danie</span>-->
-<!--                      </v-tooltip>-->
-<!--                    </v-col>-->
+                    <v-col class="pa-0">
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn v-bind="attrs" v-on="on" :disabled="item.count === 1" icon color="accent" @click="removeItem(item)">
+                            <v-icon color="accent">mdi-minus-box</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Usuń danie</span>
+                      </v-tooltip>
+                    </v-col>
+                    <v-col class="pa-0">
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn icon v-bind="attrs" v-on="on">
+                            {{item.count}}
+                          </v-btn>
+                        </template>
+                        <span>Ilość</span>
+                      </v-tooltip>
+                    </v-col>
+                    <v-col class="pa-0">
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn v-bind="attrs" v-on="on" icon color="accent" @click="addItem(item)">
+                            <v-icon color="accent">mdi-plus-box</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Dodaj danie</span>
+                      </v-tooltip>
+                    </v-col>
                     <v-col class="pa-0">
                       <v-tooltip top>
                         <template v-slot:activator="{ on, attrs }">
@@ -90,7 +90,7 @@
                   </v-row>
                 </v-list-item-action>
               </v-list-item>
-              <v-expansion-panels focusable flat>
+              <v-expansion-panels v-model="item.ingridients" focusable flat>
                 <v-expansion-panel>
                   <v-expansion-panel-header>
                     <div class="text-caption">Wyświetl szczegóły dania</div>
@@ -98,27 +98,19 @@
                       <v-icon color="primary">mdi-information</v-icon>
                     </template>
                   </v-expansion-panel-header>
-                  <v-expansion-panel-content class="text-caption">
-                    <v-row v-for="(ingrideintCategory, ingridientCategoryName) in item.ingridients" :key="ingridientCategoryName">
-                      <v-col class="col-12 ml-2 pa-1 pt-3">
-                        {{ingridientCategoryName}}
-                      </v-col>
-                      <template v-if="Array.isArray(ingrideintCategory)">
-                        <v-col class="col-12 pa-1"
-                               v-for="(ingridient, index) in ingrideintCategory"
-                               :key="index"
-                        >
-                          <v-icon class="ml-3">mdi-circle-small</v-icon>{{ingridient.ingridientName}} ({{ingridient.price.toFixed(2)}} zł)
-                        </v-col>
-                      </template>
-                      <v-col class="col-12 pa-1" v-else-if="ingrideintCategory === -1">
-                        <v-icon class="ml-3">mdi-circle-small</v-icon>brak
-                      </v-col>
-                      <v-col class="col-12 pa-1" v-else>
-                        <v-icon class="ml-3">mdi-circle-small</v-icon>{{ingrideintCategory.ingridientName}} ({{ingrideintCategory.price.toFixed(2)}} zł)
-                      </v-col>
-                    </v-row>
-                  </v-expansion-panel-content>
+<!--                  <v-expansion-panel-content class="text-caption">-->
+<!--                    <v-row v-for="(ingrideintCategory, ingridientCategoryName) in item.ingridients" :key="ingridientCategoryName">-->
+<!--                      <v-col class="col-12 ml-2 pa-1 pt-3">-->
+<!--                        {{ingridientCategoryName}}-->
+<!--                      </v-col>-->
+<!--                      <v-col class="col-12 pa-1"-->
+<!--                             v-for="(ingridient, key) in ingrideintCategory"-->
+<!--                             :key="key"-->
+<!--                      >-->
+<!--                        <v-icon class="ml-3">mdi-circle-small</v-icon>{{ingridient.ingridientName}} ({{ingridient.price.toFixed(2)}} zł)-->
+<!--                      </v-col>-->
+<!--                    </v-row>-->
+<!--                  </v-expansion-panel-content>-->
                 </v-expansion-panel>
               </v-expansion-panels>
             </v-list>
@@ -127,18 +119,12 @@
         </v-tooltip>
       </template>
     </v-card-text>
-<!--    <dish-ingridient-modal></dish-ingridient-modal>-->
   </v-card>
 </template>
 
 <script>
-// import dishIngridientModal from "@/components/dish/dishIngridientModal.vue";
-
 export default {
   name: 'cartComponent',
-  components: {
-    // dishIngridientModal
-  },
   data() {
     return {
       imageLoaded: false,
@@ -176,15 +162,36 @@ export default {
       deep: true
     }
   },
+  created() {
+    this.calculateTotalPrice([])
+  },
   methods: {
     calculateTotalPrice(newCart) {
-      let totalPrice = 0;
-      for (const item of newCart) {
-        if (item.price && item.count) {
-          totalPrice += item.price * item.count
+      if(newCart.length > 0) {
+        let totalPrice = 0;
+        for (const item of newCart) {
+          if (item.price && item.count) {
+            totalPrice += item.price * item.count
+          }
+        }
+        this.totalPrice = totalPrice
+      } else {
+        let cart = localStorage.getItem('cart')
+        if (cart) {
+          this.$store.state.cart = JSON.parse(cart)
+          let totalPrice = 0;
+          for (const item of this.$store.state.cart) {
+            if (item.price && item.count) {
+              totalPrice += item.price * item.count
+            }
+          }
+          this.totalPrice = totalPrice
+        } else {
+          this.totalPrice = 0.00
         }
       }
-      this.totalPrice = totalPrice
+      let totalCostStringify = JSON.stringify(this.totalPrice, null, 2)
+      localStorage.setItem('totalCost', totalCostStringify)
     },
     imageLoadedFn() {
       this.imageLoaded = true

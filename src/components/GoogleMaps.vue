@@ -3,7 +3,7 @@
     <GmapMap
         map-type-id="terrain"
         :center="mapCoordinates"
-        :zoom="12"
+        :zoom="13"
         :style='"height: " + height + "px"'
         ref="mapRef"
     >

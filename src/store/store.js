@@ -13,6 +13,7 @@ const store = new Vuex.Store({
             dishIngridientModal: false,
             dishId: 0,
             dishIngridientModalReturn: null,
+            dish: null
         },
         info: {
             text: '',

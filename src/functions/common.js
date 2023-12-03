@@ -26,6 +26,30 @@ export async function register(email, password){
 
 }
 
+export async function pay(amount, hiddenDescription, email, token = null){
+    if(token === null) {
+        token = await axios.post('http://localhost:8000/api/login_check', {
+            username: 'root@root',
+            password: 'root'
+        });
+    }
+
+    const response = await axios.post(
+        'http://localhost:8000/api/public/payment',
+        {
+            amount: amount,
+            hiddenDescription: hiddenDescription,
+            email: email,
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    console.log(response)
+    return {status: response.status, data: response.data}
+}
+
 
 export async function login(email, password){
     try {
@@ -35,6 +59,15 @@ export async function login(email, password){
         });
 
         if (loginCheck.data.token) {
+            const updateUserToken = await axios.post('http://localhost:8000/api/public/updateUserToken', {
+                username: email,
+                password: password
+            }, {
+                headers: {
+                    Authorization: `Bearer ${loginCheck.data.token}`
+                }
+                });
+            console.log(updateUserToken)
             return loginCheck.data.token;
         } else {
             return -1;
@@ -122,6 +155,18 @@ export async function getListItemsOrItem(name, id = 0, token = null) {
                 Authorization: `Bearer ${token}`
             }
         })
+    } else if (name === 'favoriteRestaurants') {
+        if(token === null) {
+            token = await axios.post('http://localhost:8000/api/login_check', {
+                username: 'root@root',
+                password: 'root'
+            });
+        }
+        response = await axios.get('http://localhost:8000/api/public/favorite_restaurants', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
     }
 
     if (response.status === 200) {
@@ -131,4 +176,8 @@ export async function getListItemsOrItem(name, id = 0, token = null) {
     } else  {
         return 0;
     }
+}
+
+export function calculateTotalPrice () {
+
 }

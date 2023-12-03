@@ -1,6 +1,6 @@
 <template>
   <v-card :loading="loading" flat class="mb-3">
-    <v-card-text>
+    <v-card-text v-if="restaurants">
       <v-row>
         <v-col class="col-4 pa-0">
           <v-carousel
