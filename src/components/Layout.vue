@@ -2,10 +2,12 @@
   <v-app>
     <v-app-bar app hide-on-scroll>
       <v-tabs class="text--secondary">
-        <v-tab v-for="(item, index) in mainTabs" :key="index" :to="item.path">
-          <font-awesome-icon :icon="item.icon" class="mr-3"/>
-          <span>{{item.text}}</span>
-        </v-tab>
+        <template v-for="(item, index) in mainTabs">
+          <v-tab :key="index" :to="item.path" :disabled="(item.text === 'Dostawa' && loggedUser === '') || (item.text === 'Ulubione' && loggedUser === '') ? true : false">
+            <font-awesome-icon :icon="item.icon" class="mr-3"/>
+            <span>{{item.text}}</span>
+          </v-tab>
+        </template>
       </v-tabs>
       <v-spacer></v-spacer>
       <v-menu offset-y>
@@ -163,7 +165,7 @@
       </v-card>
     </v-footer>
     <v-snackbar :color="$store.state.info.color" right bottom v-model="$store.state.info.showing" :timeout="$store.state.info.timeout">
-      {{$store.state.info.text}}
+      <span class="text-overline pa-8 my-8">{{$store.state.info.text}}</span>
       <template v-slot:action="{ attrs }">
         <v-btn text v-bind="attrs" @click="closeInfo()" color="primary">
           Zamknij
@@ -185,7 +187,7 @@ import {login, register} from "@/functions/common";
           {value: 1, text:'Restauracje', icon: 'fa-solid fa-utensils', path: '/restaurants'},
           {value: 2, text:'Dostawa', icon: 'fa-solid fa-person-biking', path: '/test'},
           {value: 3, text:'Kontakt', icon: 'fa-solid fa-phone-flip', path: '/test'},
-          {value: 4, text:'Konfiguracja', icon: 'fa-solid fa-screwdriver-wrench', path: '/test'},
+          {value: 4, text:'Konfiguracja', icon: 'fa-solid fa-screwdriver-wrench', path: '/config'},
           {value: 5, text:'Ulubione', icon: 'fa-solid fa-heart', path: '/favoriteRestaurants'}
         ],
         userMenu: [

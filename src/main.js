@@ -40,12 +40,12 @@ Vue.use(VueGoogleMaps, {
   installComponents: true
 })
 
-if (!VueCookie.get('token')) {
-  router.push('/home')
-}
-if (VueCookie.get('token')) {
-  router.push('/restaurants')
-}
+// if (!VueCookie.get('token')) {
+//   router.push('/home')
+// }
+// if (VueCookie.get('token')) {
+//   router.push('/restaurants')
+// }
 
 
 

@@ -10,6 +10,8 @@ import HomePage from '../components/home/index'
 import ErrorView404 from '../components/errors/error404'
 import CartSummary from '@/components/cartSummary/index'
 import FavoriteRestaurants from '../components/restaurants/favorite/index'
+import ConfigurationIndex from '../components/configuration/index'
+import ConfigRestaurants from '../components/configuration/restaurants/show'
 
 Vue.use(Router);
 
@@ -54,6 +56,20 @@ export default new Router({
             title: 'Ulubione restauracje'
           },
           component: FavoriteRestaurants
+        },
+        {
+          path: '/config',
+          meta: {
+            title: 'Konfiguracja'
+          },
+          component: ConfigurationIndex
+        },
+        {
+          path: '/config/restaurants',
+          meta: {
+            title: 'Edycja restauracji'
+          },
+          component: ConfigRestaurants
         }
       ]
     },

@@ -119,6 +119,18 @@ export async function getListItemsOrItem(name, id = 0, token = null) {
                 Authorization: `Bearer ${token}`
             }
         })
+    } else if (name === 'private/restaurant' && id > 0) {
+        if(token === null) {
+            token = await axios.post('http://localhost:8000/api/login_check', {
+                username: 'root@root',
+                password: 'root'
+            });
+        }
+        response = await axios.get('http://localhost:8000/api/private/restaurant/' + id, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
     } else if (name === 'restaurant' && id > 0) {
         if(token === null) {
             token = await axios.post('http://localhost:8000/api/login_check', {
