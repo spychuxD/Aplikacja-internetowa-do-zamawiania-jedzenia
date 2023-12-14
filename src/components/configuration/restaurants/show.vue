@@ -79,6 +79,9 @@
                 <v-text-field v-model="restaurant.email" label="E-mail restauracji"></v-text-field>
               </v-col>
               <v-col>
+                <v-text-field v-model="restaurant.phoneNumber" label="Numer telefonu do restauracji"></v-text-field>
+              </v-col>
+              <v-col>
                 <v-checkbox v-model="newUser" label="Dodaj nowego właściciela do systemu"></v-checkbox>
               </v-col>
             </v-row>
@@ -91,35 +94,35 @@
             </v-row>
             <v-row v-if="newUser" class="px-15">
               <v-col>
-                <v-text-field v-model="restaurant.owner[0].email" label="E-mail"></v-text-field>
+                <v-text-field v-model="restaurant.owner.email" label="E-mail"></v-text-field>
               </v-col>
               <v-col>
-                <v-text-field v-model="restaurant.owner[0].password" disabled label="Hasło"></v-text-field>
+                <v-text-field v-model="restaurant.owner.password" type="password" label="Hasło"></v-text-field>
               </v-col>
               <v-col>
-                <v-text-field v-model="restaurant.owner[0].firstName" label="Imię"></v-text-field>
+                <v-text-field v-model="restaurant.owner.firstName" label="Imię"></v-text-field>
               </v-col>
               <v-col>
-                <v-text-field v-model="restaurant.owner[0].surname" label="Nazwisko"></v-text-field>
+                <v-text-field v-model="restaurant.owner.surname" label="Nazwisko"></v-text-field>
               </v-col>
             </v-row>
             <v-row v-if="newUser" class="px-15 mb-15">
               <v-col>
-                <v-text-field v-model="restaurant.owner[0].phoneNumber" label="Numer telefonu"></v-text-field>
+                <v-text-field v-model="restaurant.owner.phoneNumber" label="Numer telefonu"></v-text-field>
               </v-col>
               <v-col>
                 <v-menu
                     ref="menu"
                     v-model="menu"
                     :close-on-content-click="false"
-                    :return-value.sync="restaurant.owner[0].dateOfBirth"
+                    :return-value.sync="restaurant.owner.dateOfBirth"
                     transition="scale-transition"
                     offset-y
                     min-width="auto"
                 >
                   <template v-slot:activator="{ on, attrs }">
                     <v-text-field
-                        v-model="restaurant.owner[0].dateOfBirth"
+                        v-model="restaurant.owner.dateOfBirth"
                         label="Data urodzenia"
                         prepend-icon="mdi-calendar"
                         readonly
@@ -128,7 +131,7 @@
                     ></v-text-field>
                   </template>
                   <v-date-picker
-                      v-model="restaurant.owner[0].dateOfBirth"
+                      v-model="restaurant.owner.dateOfBirth"
                       label="Data urodzenia"
                       scrollable
                   >
@@ -143,7 +146,7 @@
                     <v-btn
                         text
                         color="primary"
-                        @click="$refs.menu.save(restaurant.owner[0].dateOfBirth)"
+                        @click="$refs.menu.save(restaurant.owner.dateOfBirth)"
                     >
                       OK
                     </v-btn>
@@ -160,19 +163,19 @@
             </v-row>
             <v-row v-if="newUser" class="px-15 mb-15">
               <v-col>
-                <v-text-field v-model="restaurant.owner[0].mainAddress.street" label="Ulica"></v-text-field>
+                <v-text-field v-model="restaurant.owner.mainAddress.street" label="Ulica"></v-text-field>
               </v-col>
               <v-col>
-                <v-text-field v-model="restaurant.owner[0].mainAddress.parcelNumber" label="Numer budynku"></v-text-field>
+                <v-text-field v-model="restaurant.owner.mainAddress.parcelNumber" label="Numer budynku"></v-text-field>
               </v-col>
               <v-col>
-                <v-text-field v-model="restaurant.owner[0].mainAddress.apartmentNumber" label="Numer mieszkania"></v-text-field>
+                <v-text-field v-model="restaurant.owner.mainAddress.apartmentNumber" label="Numer mieszkania"></v-text-field>
               </v-col>
               <v-col>
-                <v-text-field v-model="restaurant.owner[0].mainAddress.postcode" label="Kod pocztowy"></v-text-field>
+                <v-text-field v-model="restaurant.owner.mainAddress.postcode" label="Kod pocztowy"></v-text-field>
               </v-col>
               <v-col>
-                <v-text-field v-model="restaurant.owner[0].mainAddress.city" label="Miasto"></v-text-field>
+                <v-text-field v-model="restaurant.owner.mainAddress.city" label="Miasto"></v-text-field>
               </v-col>
               <v-col>
                 <v-checkbox v-model="contactAddress" label="Zaznacz, aby dodać adres korespondencyjny"></v-checkbox>
@@ -359,7 +362,7 @@
               <v-col class="col-1 mt-3">
                 <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn v-bind="attrs" v-on="on" icon color="error" class="mx-auto" @click="newDate()"><v-icon >mdi-minus-thick</v-icon></v-btn>
+                    <v-btn :disabled="openingHoursRestaurant.length<=1" v-bind="attrs" v-on="on" icon color="error" class="mx-auto" @click="removeDate(index)"><v-icon >mdi-minus-thick</v-icon></v-btn>
                   </template>
                   <span>Usuń dzień/przedział</span>
                 </v-tooltip>
@@ -374,13 +377,20 @@
               </v-tooltip>
             </v-row>
           </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn text @click="addNewRestaurant()">
+              <v-icon class="mr-3">mdi-content-save-check</v-icon>
+              Zapisz/Dodaj
+            </v-btn>
+          </v-card-actions>
         </v-tab-item>
       </v-tabs-items>
     </v-card>
   </v-container>
 </template>
 <script>
-import {getListItemsOrItem} from "@/functions/common";
+import {getListItemsOrItem, postData} from "@/functions/common";
 
 export default {
   name: 'configRestaurants',
@@ -408,7 +418,11 @@ export default {
         email: '',
         phoneNumber: '',
         address: {},
-        restaurantCategories: []
+        restaurantCategories: [],
+        owner: {
+          mainAddress: {}
+        },
+        openingHoursRestaurant: []
       },
       openingHoursRestaurant: [],
       daysFrom: [
@@ -421,7 +435,7 @@ export default {
         'NIEDZIELA'
       ],
       daysTo: [
-        'USTAW GODZINĘ ZAMKNIĘCIA NA TEN SAM DZIEŃ',
+        'TEN SAM DZIEŃ',
         'PONIEDZIAŁEK',
         'WTOREK',
         'ŚRODA',
@@ -458,8 +472,10 @@ export default {
   methods: {
     async fetchData() {
       this.loading = true
-      this.restaurants = await getListItemsOrItem('restaurants', 0 , this.$cookie.get('token'))
-      this.restaurants = this.restaurants.map(restaurant => ({ ...restaurant, options: false }))
+      this.restaurants = await getListItemsOrItem('restaurants')
+      if (this.restaurants.length > 0) {
+        this.restaurants = this.restaurants.map(restaurant => ({ ...restaurant, options: false }))
+      }
       this.loading = false
     },
     newDate() {
@@ -472,6 +488,9 @@ export default {
         daysTo: this.daysTo
       })
     },
+    removeDate(index) {
+      this.openingHoursRestaurant.splice(index,1)
+    },
     save(hour, index, fromTo = 0) {
       if(fromTo === 0) {
         this.openingHoursRestaurant[index].hourFrom = hour
@@ -483,7 +502,7 @@ export default {
     },
     async editRestaurant(id) {
       this.tabIndex = 1
-      const response = await getListItemsOrItem('private/restaurant', id, this.$cookie.get('token'))
+      const response = await getListItemsOrItem('restaurant', id, 'private')
       this.restaurant = response[0]
       console.log('this.restaurant',this.restaurant.restaurantCategories)
       this.restaurant.restaurantCategories[0].forEach((category) => {
@@ -492,6 +511,18 @@ export default {
         this.restaurantsCategories.push({value: category.id, text: category.name})
       })
       console.log(this.restaurant)
+    },
+    async addNewRestaurant() {
+      this.restaurant.openingHoursRestaurant = this.openingHoursRestaurant
+      let response = await postData('addRestaurant', this.restaurant, this.$cookie.get('token'))
+      this.$store.state.info.showing = false
+      this.$store.state.info.text = response.data['message']
+      if(response.status === 201) {
+        this.$store.state.info.color = 'success'
+      } else {
+        this.$store.state.info.color = 'warning'
+      }
+      this.$store.state.info.showing = true
     }
   }
 }

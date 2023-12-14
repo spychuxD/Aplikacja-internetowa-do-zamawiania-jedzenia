@@ -166,8 +166,8 @@ export default {
   methods: {
     async fetchData() {
       this.loading = true
-      this.restaurantCategoriesWithDishes = await getListItemsOrItem('dishesByRestaurant', this.idRestaurant, this.$cookie.get('token'))
-      const response = await getListItemsOrItem('restaurant', this.idRestaurant, this.$cookie.get('token'))
+      this.restaurantCategoriesWithDishes = await getListItemsOrItem('dishesByRestaurant', this.idRestaurant)
+      const response = await getListItemsOrItem('restaurant', this.idRestaurant)
       this.restaurant = response[0]
       // await getImg('restaurant', this.restaurant.fileName, this.$cookie.get('token'))
       this.loading = false

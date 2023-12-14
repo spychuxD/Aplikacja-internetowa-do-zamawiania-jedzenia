@@ -17,7 +17,6 @@
 <!--  </v-container>-->
 </template>
 <script>
-import {getListItemsOrItem} from "@/functions/common";
 
 export default {
   name: 'configurationIndex',
@@ -37,13 +36,6 @@ export default {
   created() {
 
   },
-  methods: {
-    async fetchData() {
-      this.loading = true
-      this.restaurants = await getListItemsOrItem('favoriteRestaurants', 0 , this.$cookie.get('token'))
-      console.log(this.restaurants)
-      this.loading = false
-    }
-  }
+  methods: {}
 }
 </script>

@@ -156,7 +156,7 @@ import {getListItemsOrItem} from "@/functions/common";
     methods: {
       async fetchData() {
         this.loading = true
-        this.restaurants = await getListItemsOrItem('restaurants', 0 , this.$cookie.get('token'))
+        this.restaurants = await getListItemsOrItem('restaurants')
         if(this.restaurants.length > 0) {
           this.restaurants.forEach(ele => {
             // this.restaurantsAddresses.push({address_line_1: ele.street + ' ' + ele.apartmentNumber + ' ' + ele.parcelNumber, address_line_2: '', city: ele.city, zip_code: ele.postcode})

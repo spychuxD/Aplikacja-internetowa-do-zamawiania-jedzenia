@@ -40,7 +40,7 @@ export default {
   methods: {
     async fetchData() {
       this.loading = true
-      this.restaurants = await getListItemsOrItem('restaurants', 0 , this.$cookie.get('token'))
+      this.restaurants = await getListItemsOrItem('restaurants')
       if(this.restaurants.length > 0) {
         this.restaurants.forEach(ele => {
           this.restaurantNames.push(ele.name)

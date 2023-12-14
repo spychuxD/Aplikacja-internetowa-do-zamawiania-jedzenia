@@ -20,6 +20,7 @@
     "vue": "^2.7.15",
     "vue-browser-geolocation": "^1.8.0",
     "vue-cookie": "^1.1.4",
+    "vue-jwt-decode": "^0.1.0",
     "vue-router": "^2.8.1",
     "vue2-google-maps": "^0.10.7",
     "vuetify": "^2.7.1",

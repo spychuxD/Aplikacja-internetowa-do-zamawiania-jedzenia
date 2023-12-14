@@ -78,7 +78,7 @@ export default {
     },
     async fetchData() {
       this.loading = true
-      this.dishIngridients = await getListItemsOrItem('dishingridients', this.dishId)
+      this.dishIngridients = await getListItemsOrItem('dishingridients/dish', this.dishId)
       this.loading = false
     },
     showModal () {

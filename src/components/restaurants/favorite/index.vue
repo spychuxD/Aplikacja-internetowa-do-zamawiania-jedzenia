@@ -76,7 +76,7 @@ export default {
   methods: {
     async fetchData() {
       this.loading = true
-      this.restaurants = await getListItemsOrItem('favoriteRestaurants', 0 , this.$cookie.get('token'))
+      this.restaurants = await getListItemsOrItem('favoriteRestaurants', 0, 'user')
       console.log(this.restaurants)
       this.loading = false
     },

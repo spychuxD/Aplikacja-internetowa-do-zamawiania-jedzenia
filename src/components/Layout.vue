@@ -3,7 +3,10 @@
     <v-app-bar app hide-on-scroll>
       <v-tabs class="text--secondary">
         <template v-for="(item, index) in mainTabs">
-          <v-tab :key="index" :to="item.path" :disabled="(item.text === 'Dostawa' && loggedUser === '') || (item.text === 'Ulubione' && loggedUser === '') ? true : false">
+          <v-tab
+              :key="index"
+              :to="item.path"
+              :disabled="(item.text === 'Dostawa' && loggedUser === '') || (item.text === 'Ulubione' && loggedUser === '') || item.disabled ? true : false">
             <font-awesome-icon :icon="item.icon" class="mr-3"/>
             <span>{{item.text}}</span>
           </v-tab>
@@ -82,12 +85,53 @@
                         </v-col>
                         <v-col class="col-6">
                           <v-text-field v-model="userRegister.password" label="Hasło" type="password"></v-text-field>
-                          <v-text-field v-model="userRegister.name" label="Imię"></v-text-field>
+                          <v-text-field v-model="userRegister.firstName" label="Imię"></v-text-field>
                           <v-text-field v-model="userRegister.phoneNumber" label="Numer telefonu"></v-text-field>
                         </v-col>
                         <v-col class="col-6">
                           <v-text-field v-model="userRegister.repeatPassword" label="Powtórz hasło" type="password"></v-text-field>
                           <v-text-field v-model="userRegister.surname" label="Nazwisko"></v-text-field>
+                          <v-menu
+                              ref="menu"
+                              v-model="menu"
+                              :close-on-content-click="false"
+                              :return-value.sync="userRegister.dateOfBirth"
+                              transition="scale-transition"
+                              offset-y
+                              min-width="auto"
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field
+                                  v-model="userRegister.dateOfBirth"
+                                  label="Data urodzenia"
+                                  prepend-icon="mdi-calendar"
+                                  readonly
+                                  v-bind="attrs"
+                                  v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker
+                                v-model="userRegister.dateOfBirth"
+                                label="Data urodzenia"
+                                scrollable
+                            >
+                              <v-spacer></v-spacer>
+                              <v-btn
+                                  text
+                                  color="primary"
+                                  @click="menu = false"
+                              >
+                                ANULUJ
+                              </v-btn>
+                              <v-btn
+                                  text
+                                  color="primary"
+                                  @click="$refs.menu.save(userRegister.dateOfBirth)"
+                              >
+                                OK
+                              </v-btn>
+                            </v-date-picker>
+                          </v-menu>
                         </v-col>
                         <v-col class="col-12">
                           <v-divider class="primary"></v-divider>
@@ -97,19 +141,19 @@
                           <v-divider class="primary"></v-divider>
                         </v-col>
                         <v-col class="col-6">
-                          <v-text-field v-model="userRegister.street" label="Ulica"></v-text-field>
+                          <v-text-field v-model="userRegister.mainAddress.street" label="Ulica"></v-text-field>
                         </v-col>
                         <v-col class="col-3">
-                          <v-text-field v-model="userRegister.parcelNumber" label="Numer domu"></v-text-field>
+                          <v-text-field v-model="userRegister.mainAddress.parcelNumber" label="Nr domu"></v-text-field>
                         </v-col>
                         <v-col class="col-3">
-                          <v-text-field v-model="userRegister.apartmentNumber" label="Numer mieszkania"></v-text-field>
+                          <v-text-field v-model="userRegister.mainAddress.apartmentNumber" label="Nr mieszkania"></v-text-field>
                         </v-col>
                         <v-col class="col-3">
-                          <v-text-field v-model="userRegister.postcode" label="Kod pocztowy"></v-text-field>
+                          <v-text-field v-model="userRegister.mainAddress.postcode" label="Kod pocztowy"></v-text-field>
                         </v-col>
                         <v-col class="col-6">
-                          <v-text-field v-model="userRegister.city" label="Miasto"></v-text-field>
+                          <v-text-field v-model="userRegister.mainAddress.city" label="Miasto"></v-text-field>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -165,9 +209,9 @@
       </v-card>
     </v-footer>
     <v-snackbar :color="$store.state.info.color" right bottom v-model="$store.state.info.showing" :timeout="$store.state.info.timeout">
-      <span class="text-overline pa-8 my-8">{{$store.state.info.text}}</span>
+      <span class="text-overline text-center">{{$store.state.info.text}}</span>
       <template v-slot:action="{ attrs }">
-        <v-btn text v-bind="attrs" @click="closeInfo()" color="primary">
+        <v-btn text v-bind="attrs" @click="closeInfo()">
           Zamknij
         </v-btn>
       </template>
@@ -176,19 +220,20 @@
 </template>
 
 <script>
-import {login, register} from "@/functions/common";
+import {checkRoles, login, register} from "@/functions/common";
 
   export default {
     name: 'MainLayout',
     data() {
       return {
+        menu: false,
         footerTextColor: null,
         mainTabs: [
-          {value: 1, text:'Restauracje', icon: 'fa-solid fa-utensils', path: '/restaurants'},
-          {value: 2, text:'Dostawa', icon: 'fa-solid fa-person-biking', path: '/test'},
-          {value: 3, text:'Kontakt', icon: 'fa-solid fa-phone-flip', path: '/test'},
-          {value: 4, text:'Konfiguracja', icon: 'fa-solid fa-screwdriver-wrench', path: '/config'},
-          {value: 5, text:'Ulubione', icon: 'fa-solid fa-heart', path: '/favoriteRestaurants'}
+          {value: 1, text:'Restauracje', icon: 'fa-solid fa-utensils', path: '/restaurants', roles: ['ROLE_USER'], disabled: false},
+          {value: 2, text:'Dostawa', icon: 'fa-solid fa-person-biking', path: '/test', roles: ['ROLE_USER'], disabled: true},
+          {value: 3, text:'Kontakt', icon: 'fa-solid fa-phone-flip', path: '/test',  roles: ['ROLE_USER'], disabled: false},
+          {value: 4, text:'Konfiguracja', icon: 'fa-solid fa-screwdriver-wrench', path: '/config',  roles: ['ROLE_SUPERUSER'], disabled: true},
+          {value: 5, text:'Ulubione', icon: 'fa-solid fa-heart', path: '/favoriteRestaurants',  roles: ['ROLE_USER'], disabled: true}
         ],
         userMenu: [
           {value: 1, text:'Mój profil', path: '/restaurants'},
@@ -204,16 +249,26 @@ import {login, register} from "@/functions/common";
           email: '',
           password: '',
           repeatPassword: '',
-          name: '',
+          firstName: '',
           surname: '',
           phoneNumber: '',
-          street: '',
-          parcelNumber: '',
-          apartmentNumber: '',
-          postcode: '',
-          city: '',
+          mainAddress: {
+            street: '',
+            parcelNumber: '',
+            apartmentNumber: '',
+            postcode: '',
+            city: '',
+          },
+          contactAddress: {
+            street: '',
+            parcelNumber: '',
+            apartmentNumber: '',
+            postcode: '',
+            city: '',
+          },
         },
         loggedUser: '',
+        roles: []
       }
     },
     created() {
@@ -222,6 +277,18 @@ import {login, register} from "@/functions/common";
         this.isUser = true
         this.loggedUser = this.userLogin.email
       }
+      this.roles = checkRoles(this.$cookie.get('token'))
+      if(this.roles) {
+        this.mainTabs.map(tab => {
+          if(tab.roles.length > 0) {
+            let exist = tab.roles.some(element => this.roles.includes(element))
+            if(exist) {
+              tab.disabled = false
+            }
+          }
+        })
+      }
+
     },
     methods: {
       handleSubmitLogin() {
@@ -238,19 +305,28 @@ import {login, register} from "@/functions/common";
         this.dialog = false
       },
       async signUp() {
-        const email = this.userRegister.email;
-        const password = this.userRegister.password;
-
-        const response = await register(email, password);
+        const response = await register(this.userRegister);
         if(response === 0) {
           this.tabIndex = 0
+          this.$store.state.info.showing = false
+          this.$store.state.info.text = 'Pomyślnie zarejestrowano do systemu'
+          this.$store.state.info.color = 'success'
+          this.$store.state.info.showing = true
+          this.userLogin.email = this.userRegister.email
+          this.userLogin.password = this.userRegister.password
+          this.logIn()
+        } else {
+          this.$store.state.info.showing = false
+          this.$store.state.info.text = response[0]
+          this.$store.state.info.color = 'warning'
+          this.$store.state.info.showing = true
         }
       },
       async logIn() {
-        const email = this.userLogin.email;
-        const password = this.userLogin.password;
+        const email = this.userLogin.email
+        const password = this.userLogin.password
 
-        const response = await login(email, password);
+        const response = await login(email, password)
         if(response !== -1) {
           this.$cookie.set('token', response, 1)
           this.isUser = true
@@ -263,7 +339,7 @@ import {login, register} from "@/functions/common";
         } else {
           this.$store.state.info.showing = false
           this.$store.state.info.text = 'Niepoprawne dane logowania'
-          this.$store.state.info.color = 'error'
+          this.$store.state.info.color = 'warning'
           this.$store.state.info.showing = true
         }
       }
