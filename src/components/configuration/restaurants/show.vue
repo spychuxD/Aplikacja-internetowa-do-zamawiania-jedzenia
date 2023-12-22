@@ -20,10 +20,10 @@
                 dense
             >
               <template v-slot:[`item.email`]="{ item }">
-                <v-icon color="secondary" class="mr-2">mdi-at</v-icon> {{item.email}}
+                <v-icon color="secondary" class="mr-1" small>mdi-at</v-icon> {{item.email}}
               </template>
               <template v-slot:[`item.phoneNumber`]="{ item }">
-                <v-icon color="secondary" class="mr-2">mdi-phone</v-icon> {{item.phoneNumber}}
+                <v-icon color="secondary" class="mr-1" small>mdi-phone</v-icon> {{item.phoneNumber}}
               </template>
               <template v-slot:[`item.options`]="{ item }">
                 <v-menu
@@ -43,7 +43,10 @@
                   </template>
                   <v-list color="secondary">
                     <v-list-item-group v-model="selectedItem">
-                      <v-list-item @click="editRestaurant(item.id)">
+                      <v-list-item @click="()=> {
+                        editRestaurant(item)
+                        item.options = true
+                      }">
                         <v-list-item-icon>
                           <v-icon color="primary">mdi-cog</v-icon>
                         </v-list-item-icon>
@@ -500,9 +503,10 @@ export default {
         this.openingHoursRestaurant[index].menu2 = false
       }
     },
-    async editRestaurant(id) {
+    async editRestaurant(item) {
+      let id = item.id
       this.tabIndex = 1
-      const response = await getListItemsOrItem('restaurant', id, 'private')
+      const response = await getListItemsOrItem('restaurant', id, 'api', 'admin')
       this.restaurant = response[0]
       console.log('this.restaurant',this.restaurant.restaurantCategories)
       this.restaurant.restaurantCategories[0].forEach((category) => {

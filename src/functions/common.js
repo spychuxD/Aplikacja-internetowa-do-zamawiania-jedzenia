@@ -1,5 +1,6 @@
 import axios from "axios";
 import VueJwtDecode from 'vue-jwt-decode'
+import VueCookie from "vue-cookie";
 // function responseAlert (response, title = 'Błąd podczas pobierania danych') {
 //     let text = ''
 //     for (let i in response.data) {
@@ -23,7 +24,7 @@ export function checkRoles(token = null){
 }
 
 export async function register(userRegister){
-    const response = await axios.post('http://localhost:8000/registration', {
+    const response = await axios.post('http://localhost:8000/common/registration', {
         userRegister: userRegister
     })
     if(response.status === 201) {
@@ -34,13 +35,16 @@ export async function register(userRegister){
 }
 
 export async function postData(path, restaurant, token) {
-    const response = await axios.post('http://localhost:8000/api/private/' + path, {
+    console.log(token)
+    const response = await axios.post('http://localhost:8000/api/admin/' + path, {
         restaurant: restaurant
-    }, {
-        headers: {
-            Authorization: `Bearer ${token}`
+    }
+    ,{
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
         }
-    }).catch(reason => {
+    ).catch(reason => {
         console.log(reason.response)
         if(reason.response.status === 401 && reason.response.data.message === 'JWT Token not found') {
             return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'}
@@ -87,14 +91,13 @@ export async function login(email, password){
             password: password
         });
         if (loginCheck.data.token) {
-            window.axios.defaults.headers.common = {
-                'Authorization': `Bearer ${loginCheck.data.token}`,
-                'Content-Type': 'application/json'
-            }
-            console.log(window.axios.defaults.headers.common)
-            const updateUserToken = await axios.post('http://localhost:8000/api/public/updateUserToken', {
+            const updateUserToken = await axios.post('http://localhost:8000/common/updateUserToken', {
                 username: email,
                 password: password
+            }, {
+                headers: {
+                    Authorization: `Bearer ${loginCheck.data.token}`
+                }
             });
             console.log(updateUserToken.data)
             if(updateUserToken.data[0] === 'Upgraded') {
@@ -102,6 +105,7 @@ export async function login(email, password){
             } else {
                 return -1;
             }
+            // return loginCheck.data.token;
         } else {
             return -1;
         }
@@ -138,12 +142,25 @@ export async function getImg(name, img, token) {
         console.log(response)
     }
 }
-export async function getListItemsOrItem(name, id = 0, state = 'public') {
+export async function getListItemsOrItem(name, id = 0, state = 'common', role = '') {
     let response
+    let path = 'http://localhost:8000/' + state + '/' + name
+    if(role !== '') {
+        path = 'http://localhost:8000/' + state + '/' + role + '/' + name
+    }
+    const token = VueCookie.get('token')
     if(id > 0) {
-        response = await axios.get('http://localhost:8000/api/' + state + '/' + name + '/' + id)
+        response = await axios.get(path + '/' + id, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
     } else {
-        response = await axios.get('http://localhost:8000/api/' + state + '/' + name + '/')
+        response = await axios.get(path, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
     }
 
     if (response.status === 200) {

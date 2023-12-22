@@ -213,6 +213,7 @@ export default {
             this.$store.state.modal.dishIngridientModal = true
             this.$store.state.modal.dishId = dish.dishId
             this.$store.state.info.showing = false
+            this.$store.state.info.loading = false
             this.$store.state.info.text = 'Dodano danie do koszyka'
             this.$store.state.info.color = 'success'
             this.$store.state.info.showing = true
@@ -247,6 +248,7 @@ export default {
         this.$store.state.modal.dishIngridientModal = true
         this.$store.state.modal.dishId = dish.dishId
         this.$store.state.info.showing = false
+        this.$store.state.info.loading = false
         this.$store.state.info.text = 'Dodano danie do nowego koszyka'
         this.$store.state.info.color = 'success'
         this.$store.state.info.showing = true
@@ -280,6 +282,7 @@ export default {
             localStorage.removeItem('cart')
           }
           this.$store.state.info.showing = false
+          this.$store.state.info.loading = false
           this.$store.state.info.text = 'Usunięto danie z koszyka'
           this.$store.state.info.color = 'success'
           this.$store.state.info.showing = true
@@ -289,6 +292,7 @@ export default {
     dialogCancel() {
       this.dialog = false
       this.$store.state.info.showing = false
+      this.$store.state.info.loading = false
       this.$store.state.info.text = 'Danie nie zostało dodane do koszyka'
       this.$store.state.info.color = 'warning'
       this.$store.state.info.showing = true
@@ -311,6 +315,7 @@ export default {
       localStorage.setItem('cart', cartStringify)
       this.dialog = false
       this.$store.state.info.showing = false
+      this.$store.state.info.loading = false
       this.$store.state.info.text = 'Usunięto koszyk i pomyślnie dodano nowe danie'
       this.$store.state.info.color = 'success'
       this.$store.state.info.showing = true

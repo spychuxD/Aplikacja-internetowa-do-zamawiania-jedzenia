@@ -15,13 +15,16 @@
       <v-spacer></v-spacer>
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
-          <v-btn v-if="isUser" v-bind="attrs" v-on="on">
+          <v-btn icon color="primary" fab dense v-if="isUser" v-bind="attrs" v-on="on">
             <v-icon>mdi-account</v-icon>
           </v-btn>
         </template>
         <v-list dense>
           <v-list-item v-for="(item, index) in userMenu" :key="index">
             <v-list-item-title>{{ item.text }}</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="logOut()">
+            <v-list-item-title>Wyloguj</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -210,6 +213,7 @@
     </v-footer>
     <v-snackbar :color="$store.state.info.color" right bottom v-model="$store.state.info.showing" :timeout="$store.state.info.timeout">
       <span class="text-overline text-center">{{$store.state.info.text}}</span>
+      <v-progress-circular indeterminate class="ml-3" v-if="$store.state.info.loading"></v-progress-circular>
       <template v-slot:action="{ attrs }">
         <v-btn text v-bind="attrs" @click="closeInfo()">
           Zamknij
@@ -236,7 +240,7 @@ import {checkRoles, login, register} from "@/functions/common";
           {value: 5, text:'Ulubione', icon: 'fa-solid fa-heart', path: '/favoriteRestaurants',  roles: ['ROLE_USER'], disabled: true}
         ],
         userMenu: [
-          {value: 1, text:'Mój profil', path: '/restaurants'},
+          {value: 1, text:'Mój profil', path: '/restaurants'}
         ],
         isUser: false,
         dialog: false,
@@ -273,9 +277,22 @@ import {checkRoles, login, register} from "@/functions/common";
     },
     created() {
       this.footerTextColor = this.$vuetify.theme.themes.light.primary
+      console.log(this.$cookie.get('token'))
       if(this.$cookie.get('token')) {
         this.isUser = true
         this.loggedUser = this.userLogin.email
+        this.$store.state.info.showing = false
+        this.$store.state.info.loading = false
+        this.$store.state.info.text = 'Pomyślnie zalogowano'
+        this.$store.state.info.color = 'success'
+        this.$store.state.info.showing = true
+      } else {
+        this.dialog = true
+        this.$store.state.info.showing = false
+        this.$store.state.info.loading = false
+        this.$store.state.info.text = 'Użytkownik niezalogowany'
+        this.$store.state.info.color = 'info'
+        this.$store.state.info.showing = true
       }
       this.roles = checkRoles(this.$cookie.get('token'))
       if(this.roles) {
@@ -299,6 +316,7 @@ import {checkRoles, login, register} from "@/functions/common";
         this.$store.state.info.text = ''
         this.$store.state.info.timeout = 3000
         this.$store.state.info.showing = false
+        this.$store.state.info.loading = false
       },
       handleSubmitRegister() {
         this.signUp()
@@ -309,14 +327,16 @@ import {checkRoles, login, register} from "@/functions/common";
         if(response === 0) {
           this.tabIndex = 0
           this.$store.state.info.showing = false
+          this.$store.state.info.loading = false
           this.$store.state.info.text = 'Pomyślnie zarejestrowano do systemu'
           this.$store.state.info.color = 'success'
           this.$store.state.info.showing = true
           this.userLogin.email = this.userRegister.email
           this.userLogin.password = this.userRegister.password
-          this.logIn()
+          await this.logIn()
         } else {
           this.$store.state.info.showing = false
+          this.$store.state.info.loading = false
           this.$store.state.info.text = response[0]
           this.$store.state.info.color = 'warning'
           this.$store.state.info.showing = true
@@ -332,18 +352,36 @@ import {checkRoles, login, register} from "@/functions/common";
           this.isUser = true
           this.loggedUser = this.userLogin.email
           this.$store.state.info.showing = false
-          this.$store.state.info.text = 'Pomyślnie zalogowano'
-          this.$store.state.info.color = 'success'
+          this.$store.state.info.loading = true
+          this.$store.state.info.text = 'Logowanie...'
+          this.$store.state.info.color = 'info'
           this.$store.state.info.showing = true
-          window.location.reload(true)
+          setTimeout(() => {
+            window.location.reload(true);
+          }, 1500);
         } else {
           this.$store.state.info.showing = false
+          this.$store.state.info.loading = false
           this.$store.state.info.text = 'Niepoprawne dane logowania'
           this.$store.state.info.color = 'warning'
           this.$store.state.info.showing = true
         }
+      },
+      logOut() {
+        this.$cookie.delete('token')
+        this.isUser = false
+        this.loggedUser = ''
+        this.$store.state.info.showing = false
+        this.$store.state.info.loading = true
+        this.$store.state.info.text = 'Wylogowywanie...'
+        this.$store.state.info.color = 'info'
+        this.$store.state.info.showing = true
+        setTimeout(() => {
+          this.$router.push('/home')
+          window.location.reload(true);
+        }, 1500);
+        this.$router.push('/home')
       }
-
-    }
+    },
   }
 </script>

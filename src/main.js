@@ -31,11 +31,7 @@ export default {
     debounce: directive
   }
 }
-window.axios = require('axios')
-window.axios.defaults.headers.common = {
-  'Authorization': 'Bearer ' + VueCookie.get('token'),
-  'Content-Type': 'application/json'
-}
+
 Vue.use(VueGoogleMaps, {
   load: {
     key: 'AIzaSyD40ckrPhTz4c1PvOQxx2VWPMV_Znb_B2o'
@@ -44,7 +40,7 @@ Vue.use(VueGoogleMaps, {
   installComponents: true
 })
 
-
+router.push('/home')
 // if (!VueCookie.get('token')) {
 //   router.push('/home')
 // }

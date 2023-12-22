@@ -19,7 +19,8 @@ const store = new Vuex.Store({
             text: '',
             showing: false,
             timeout: 5000,
-            color: 'info'
+            color: 'info',
+            loading: true
         },
         cart: []
     },
