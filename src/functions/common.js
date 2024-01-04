@@ -59,7 +59,7 @@ export async function postData(path, restaurant, token) {
     return {status: response.status, data: response.data}
 }
 
-export async function pay(amount, hiddenDescription, email, token = null){
+export async function pay(amount, hiddenDescription, email, cart, cost, address, token = null){
     if(token === null) {
         token = await axios.post('http://localhost:8000/api/login_check', {
             username: 'root@root',
@@ -68,11 +68,14 @@ export async function pay(amount, hiddenDescription, email, token = null){
     }
 
     const response = await axios.post(
-        'http://localhost:8000/api/public/payment',
+        'http://localhost:8000/common/payment',
         {
             amount: amount,
             hiddenDescription: hiddenDescription,
             email: email,
+            cart: cart,
+            cost: cost,
+            address: address
         },
         {
             headers: {

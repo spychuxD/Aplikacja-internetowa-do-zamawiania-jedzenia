@@ -180,13 +180,15 @@ export default {
       let cart = localStorage.getItem('cart')
       let restaurant = localStorage.getItem('restaurant')
       this.dishIngridients = await getListItemsOrItem('dishingridients', dish.dishId)
-      this.dishIngridients.forEach((ingridientCategory) => {
-        if (ingridientCategory.isMultiOption) {
-          this.ingridients[ingridientCategory.ingridientCategoryName] = []
-        } else {
-          this.ingridients[ingridientCategory.ingridientCategoryName] = {}
-        }
-      });
+      if(this.dishIngridients.length > 0) {
+        this.dishIngridients.forEach((ingridientCategory) => {
+          if (ingridientCategory.isMultiOption) {
+            this.ingridients[ingridientCategory.ingridientCategoryName] = []
+          } else {
+            this.ingridients[ingridientCategory.ingridientCategoryName] = {}
+          }
+        });
+      }
       if (cart && restaurant) {
         if (this.restaurant.id == restaurant) {
           this.$store.state.cart = JSON.parse(cart)

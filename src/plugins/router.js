@@ -12,6 +12,7 @@ import CartSummary from '@/components/cartSummary/index'
 import FavoriteRestaurants from '../components/restaurants/favorite/index'
 import ConfigurationIndex from '../components/configuration/index'
 import ConfigRestaurants from '../components/configuration/restaurants/show'
+import Tracking from '../components/cartSummary/tracking'
 
 Vue.use(Router);
 
@@ -49,6 +50,13 @@ export default new Router({
             title: 'Podsumowanie zamówienia'
           },
           component: CartSummary
+        },
+        {
+          path: '/trackingOrder/:id',
+          meta: {
+            title: 'Śledzenie zamówenia'
+          },
+          component: Tracking
         },
         {
           path: '/favoriteRestaurants',

@@ -139,7 +139,7 @@
 
 <script>
 // import googleMaps from '../GoogleMaps'
-import {pay} from "@/functions/common";
+import { pay } from "@/functions/common";
 
 export default {
   name: 'cartSummary',
@@ -164,7 +164,7 @@ export default {
           text: 'JAK NAJSZYBCIEJ'
         }
       ],
-      clientAddress: [{address_line_1: 'Mazurska' + ' ' + '66', address_line_2: '', city: 'Kielce', zip_code: '25-345'}]
+      clientAddress: {address_line_1: 'Mazurska 66', address_line_2: '', city: 'Kielce', zip_code: '25-345'}
     }
   },
   created() {
@@ -186,9 +186,11 @@ export default {
     },
     async payForOrder() {
       const amount = JSON.parse(localStorage.getItem('totalCost'))
+      this.$store.state.cart = JSON.parse(localStorage.getItem('cart'))
       const hiddenDescription = JSON.parse(localStorage.getItem('restaurant'))
+      const address = this.clientAddress.address_line_1 + ', ' + this.clientAddress.zip_code + ' ' + this.clientAddress.city
       if(amount && hiddenDescription) {
-        const response = await pay(amount, hiddenDescription, this.email, this.$cookie.get('token'))
+        const response = await pay(amount, hiddenDescription, this.email, this.$store.state.cart, amount, address, this.$cookie.get('token'))
         if(response.status !== 201) {
           this.$store.state.info.showing = false
           this.$store.state.info.text = response.data

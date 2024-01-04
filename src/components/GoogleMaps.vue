@@ -19,6 +19,11 @@
           :clickable="true"
           :icon="'https://i.ibb.co/8dgvJYX/home-account.png'"
       />
+      <GmapMarker
+          v-if="lat && lng"
+          :position="{lat: lat, lng: lng}"
+          :clickable="false"
+      />
     </GmapMap>
   </div>
 </template>
@@ -54,7 +59,15 @@ export default {
     },
     addresses: {
       type: Array,
-      required: true
+      required: false
+    },
+    lat: {
+      type: Number,
+      required: false
+    },
+    lng: {
+      type: Number,
+      required: false
     }
   },
   watch: {
@@ -64,7 +77,7 @@ export default {
     },
   },
   created() {
-    this.geoCoder(this.addresses)
+    this.geoCoder()
     this.getUserLocation()
     // this.$getLocation().then(coordinates => {
     //   this.myCoordinates.lat = coordinates.lat
@@ -79,6 +92,7 @@ export default {
             if (response.status === 'OK') {
               if(response.results.length === 1) {
                 this.markers.push({lng: response.results[0].geometry.location.lng, lat: response.results[0].geometry.location.lat})
+                console.log('restaurant',{lng: response.results[0].geometry.location.lng, lat: response.results[0].geometry.location.lat})
               }
             }
           });

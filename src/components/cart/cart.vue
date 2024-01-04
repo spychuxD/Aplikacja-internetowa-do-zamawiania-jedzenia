@@ -13,7 +13,7 @@
             </span>
           </v-chip>
         </template>
-        <span>Całkowity koszt</span>
+        <span>Całkowity koszt/ Podsumowanie</span>
       </v-tooltip>
     </v-card-title>
 <!--    <template v-slot:actions>-->

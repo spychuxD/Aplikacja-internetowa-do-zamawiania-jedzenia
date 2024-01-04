@@ -6,13 +6,19 @@
           <v-tab
               :key="index"
               :to="item.path"
-              :disabled="(item.text === 'Dostawa' && loggedUser === '') || (item.text === 'Ulubione' && loggedUser === '') || item.disabled ? true : false">
+              :disabled="(item.text === 'Ulubione' && loggedUser === '') || item.disabled ? true : false">
             <font-awesome-icon :icon="item.icon" class="mr-3"/>
             <span>{{item.text}}</span>
           </v-tab>
         </template>
       </v-tabs>
       <v-spacer></v-spacer>
+      <v-btn text class="mr-3" color="primary" dense @click="$router.push('/cartSummary')">
+        <v-icon class="mr-3">mdi-cart</v-icon>Podsumowanie
+      </v-btn>
+      <v-btn text class="mr-3" color="primary" dense @click="setLocation">
+        <v-icon class="mr-3">mdi-cart</v-icon>TEST
+      </v-btn>
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-btn icon color="primary" fab dense v-if="isUser" v-bind="attrs" v-on="on">
@@ -225,6 +231,8 @@
 
 <script>
 import {checkRoles, login, register} from "@/functions/common";
+import axios from "axios";
+
 
   export default {
     name: 'MainLayout',
@@ -234,7 +242,7 @@ import {checkRoles, login, register} from "@/functions/common";
         footerTextColor: null,
         mainTabs: [
           {value: 1, text:'Restauracje', icon: 'fa-solid fa-utensils', path: '/restaurants', roles: ['ROLE_USER'], disabled: false},
-          {value: 2, text:'Dostawa', icon: 'fa-solid fa-person-biking', path: '/test', roles: ['ROLE_USER'], disabled: true},
+          {value: 2, text:'Dostawa', icon: 'fa-solid fa-person-biking', path: '/trackingOrder/1', roles: ['ROLE_USER'], disabled: true},
           {value: 3, text:'Kontakt', icon: 'fa-solid fa-phone-flip', path: '/test',  roles: ['ROLE_USER'], disabled: false},
           {value: 4, text:'Konfiguracja', icon: 'fa-solid fa-screwdriver-wrench', path: '/config',  roles: ['ROLE_SUPERUSER'], disabled: true},
           {value: 5, text:'Ulubione', icon: 'fa-solid fa-heart', path: '/favoriteRestaurants',  roles: ['ROLE_USER'], disabled: true}
@@ -381,6 +389,28 @@ import {checkRoles, login, register} from "@/functions/common";
           window.location.reload(true);
         }, 1500);
         this.$router.push('/home')
+      },
+      async setLocation() {
+        const response = await axios.get('http://localhost:8000/api/findCourierOrder',
+            {
+              headers: {
+                Authorization: `Bearer ${this.$cookie.get('token')}`
+              }
+            }
+        ).catch(reason => {
+          console.log(reason.response)
+          if(reason.response.status === 401 && reason.response.data.message === 'JWT Token not found') {
+            return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'}
+          }
+          if(reason.response.status === 401 && reason.response.data.message === 'Expired JWT Token') {
+            return {status: 207, data: 'Wygasł dostęp.'} //trzeba dodac refreshToken i wyrzucać do logowania
+          }
+          if(reason.response.status === 403 && reason.response.data.detail === 'Access Denied.') {
+            return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'} //trzeba dodac refreshToken i wyrzucać do logowania
+          }
+        })
+        console.log(response.status)
+        console.log(response.data)
       }
     },
   }
