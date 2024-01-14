@@ -6,7 +6,7 @@
           <v-tab
               :key="index"
               :to="item.path"
-              :disabled="(item.text === 'Ulubione' && loggedUser === '') || item.disabled ? true : false">
+              :disabled="item.disabled">
             <font-awesome-icon :icon="item.icon" class="mr-3"/>
             <span>{{item.text}}</span>
           </v-tab>
@@ -16,9 +16,9 @@
       <v-btn text class="mr-3" color="primary" dense @click="$router.push('/cartSummary')">
         <v-icon class="mr-3">mdi-cart</v-icon>Podsumowanie
       </v-btn>
-      <v-btn text class="mr-3" color="primary" dense @click="setLocation">
-        <v-icon class="mr-3">mdi-cart</v-icon>TEST
-      </v-btn>
+<!--      <v-btn text class="mr-3" color="primary" dense @click="setLocation">-->
+<!--        <v-icon class="mr-3">mdi-cart</v-icon>TEST-->
+<!--      </v-btn>-->
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-btn icon color="primary" fab dense v-if="isUser" v-bind="attrs" v-on="on">
@@ -244,8 +244,9 @@ import axios from "axios";
           {value: 1, text:'Restauracje', icon: 'fa-solid fa-utensils', path: '/restaurants', roles: ['ROLE_USER'], disabled: false},
           {value: 2, text:'Dostawa', icon: 'fa-solid fa-person-biking', path: '/trackingOrder/1', roles: ['ROLE_USER'], disabled: true},
           {value: 3, text:'Kontakt', icon: 'fa-solid fa-phone-flip', path: '/test',  roles: ['ROLE_USER'], disabled: false},
-          {value: 4, text:'Konfiguracja', icon: 'fa-solid fa-screwdriver-wrench', path: '/config',  roles: ['ROLE_SUPERUSER'], disabled: true},
-          {value: 5, text:'Ulubione', icon: 'fa-solid fa-heart', path: '/favoriteRestaurants',  roles: ['ROLE_USER'], disabled: true}
+          {value: 4, text:'Ulubione', icon: 'fa-solid fa-heart', path: '/favoriteRestaurants',  roles: ['ROLE_USER'], disabled: true},
+          {value: 5, text:'Oceny', icon: 'fa-solid fa-star', path: '/rating',  roles: ['ROLE_USER'], disabled: true},
+          {value: 6, text:'Konfiguracja', icon: 'fa-solid fa-screwdriver-wrench', path: '/config',  roles: ['ROLE_SUPERUSER'], disabled: true}
         ],
         userMenu: [
           {value: 1, text:'Mój profil', path: '/restaurants'}

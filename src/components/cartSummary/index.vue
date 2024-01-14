@@ -92,7 +92,7 @@
                 ></v-select>
               </v-col>
               <v-col class="col-7">
-<!--                <google-maps :addresses="clientAddress" :height="300"></google-maps>-->
+                <google-maps :addresses="clientAddress" :height="300"></google-maps>
               </v-col>
             </v-row>
             <v-row>
@@ -138,14 +138,14 @@
 </template>
 
 <script>
-// import googleMaps from '../GoogleMaps'
+import googleMaps from '../GoogleMaps'
 import { pay } from "@/functions/common";
 
 export default {
   name: 'cartSummary',
-  // components: {
-  //   googleMaps
-  // },
+  components: {
+    googleMaps
+  },
   data() {
     return {
       tabIndex: 0,

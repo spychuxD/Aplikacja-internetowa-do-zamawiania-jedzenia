@@ -53,7 +53,7 @@
                   <v-list-item-action>
                     <v-row>
                       <div class="mr-3 mt-1" style="font-weight: bold">
-                        {{dish.price}} zł
+                        {{dish.price.toFixed(2)}} zł
                       </div>
                       <v-btn icon color="primary">
                         <v-icon>mdi-cart-arrow-down</v-icon>
@@ -79,7 +79,7 @@
           </v-img>
         </v-card>
         <v-card class="mt-3">
-<!--          <google-maps :height="300" :addresses="restaurantsAddress"></google-maps>-->
+          <google-maps :height="300" :addresses="restaurantsAddress"></google-maps>
         </v-card>
       </v-col>
     </v-row>
@@ -126,12 +126,12 @@ import {getListItemsOrItem} from '@/functions/common'
 import dishIngridientModal from '../../dish/dishIngridientModal.vue'
 import cartButtonWithDialog from '../../cart/cartButtonWithDialog.vue'
 import cartComponent from '../../cart/cart.vue'
-// import googleMaps from '../../GoogleMaps.vue'
+import googleMaps from '../../GoogleMaps.vue'
 
 export default {
   name: 'restaurantMenu',
   components: {
-    dishIngridientModal, cartButtonWithDialog, cartComponent,
+    dishIngridientModal, cartButtonWithDialog, cartComponent, googleMaps
   },
   data() {
     return {
@@ -152,7 +152,7 @@ export default {
       ],
       imageLoaded: false,
       restaurantCategoriesWithDishes: [],
-      restaurantsAddress: [{address_line_1: 'Mazurska' + ' ' + '66', address_line_2: '', city: 'Kielce', zip_code: '25-345'}]
+      restaurantsAddress: [{address_line_1: 'aleja Solidarności 16', address_line_2: '', city: 'Kielce', zip_code: '25-900'}]
     }
   },
   created() {

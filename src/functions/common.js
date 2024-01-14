@@ -34,29 +34,53 @@ export async function register(userRegister){
     }
 }
 
-export async function postData(path, restaurant, token) {
-    console.log(token)
-    const response = await axios.post('http://localhost:8000/api/admin/' + path, {
-        restaurant: restaurant
-    }
-    ,{
-            headers: {
-                Authorization: `Bearer ${token}`
+export async function postData(path, data, token) {
+    if(path === 'addRestaurant') {
+        const response = await axios.post('http://localhost:8000/api/admin/' + path, {
+                restaurant: data
             }
-        }
-    ).catch(reason => {
-        console.log(reason.response)
-        if(reason.response.status === 401 && reason.response.data.message === 'JWT Token not found') {
-            return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'}
-        }
-        if(reason.response.status === 401 && reason.response.data.message === 'Expired JWT Token') {
-            return {status: 207, data: 'Wygasł dostęp.'} //trzeba dodac refreshToken i wyrzucać do logowania
-        }
-        if(reason.response.status === 403 && reason.response.data.detail === 'Access Denied.') {
-            return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'} //trzeba dodac refreshToken i wyrzucać do logowania
-        }
-    })
-    return {status: response.status, data: response.data}
+            ,{
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        ).catch(reason => {
+            console.log(reason.response)
+            if(reason.response.status === 401 && reason.response.data.message === 'JWT Token not found') {
+                return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'}
+            }
+            if(reason.response.status === 401 && reason.response.data.message === 'Expired JWT Token') {
+                return {status: 207, data: 'Wygasł dostęp.'} //trzeba dodac refreshToken i wyrzucać do logowania
+            }
+            if(reason.response.status === 403 && reason.response.data.detail === 'Access Denied.') {
+                return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'} //trzeba dodac refreshToken i wyrzucać do logowania
+            }
+        })
+        return {status: response.status, data: response.data}
+    }
+    if(path === 'addCategory' || path === 'addDishCategory' || path === 'addIngridientCategory') {
+        const response = await axios.post('http://localhost:8000/api/admin/' + path, {
+                category: data
+            }
+            ,{
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        ).catch(reason => {
+            console.log(reason.response)
+            if(reason.response.status === 401 && reason.response.data.message === 'JWT Token not found') {
+                return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'}
+            }
+            if(reason.response.status === 401 && reason.response.data.message === 'Expired JWT Token') {
+                return {status: 207, data: 'Wygasł dostęp.'} //trzeba dodac refreshToken i wyrzucać do logowania
+            }
+            if(reason.response.status === 403 && reason.response.data.detail === 'Access Denied.') {
+                return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'} //trzeba dodac refreshToken i wyrzucać do logowania
+            }
+        })
+        return {status: response.status, data: response.data}
+    }
 }
 
 export async function pay(amount, hiddenDescription, email, cart, cost, address, token = null){
@@ -146,33 +170,39 @@ export async function getImg(name, img, token) {
     }
 }
 export async function getListItemsOrItem(name, id = 0, state = 'common', role = '') {
-    let response
-    let path = 'http://localhost:8000/' + state + '/' + name
-    if(role !== '') {
-        path = 'http://localhost:8000/' + state + '/' + role + '/' + name
-    }
-    const token = VueCookie.get('token')
-    if(id > 0) {
-        response = await axios.get(path + '/' + id, {
-            headers: {
-                Authorization: `Bearer ${token}`
+    try {
+        let response
+        let path = 'http://localhost:8000/' + state + '/' + name
+        if(role !== '') {
+            path = 'http://localhost:8000/' + state + '/' + role + '/' + name
+        }
+        const token = VueCookie.get('token')
+        if(id > 0) {
+            response = await axios.get(path + '/' + id, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+        } else {
+            response = await axios.get(path, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+        }
+
+        if (response.status === 200) {
+            if (response.data.length > 0 || typeof response.data === 'object') {
+                return response.data;
             }
-        })
-    } else {
-        response = await axios.get(path, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
+        } else  {
+            return 0;
+        }
+    } catch (error) {
+        console.log(error.response.data)
+        return error.response.data
     }
 
-    if (response.status === 200) {
-        if (response.data.length > 0 || typeof response.data === 'object') {
-            return response.data;
-        }
-    } else  {
-        return 0;
-    }
 }
 
 export function calculateTotalPrice () {

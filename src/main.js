@@ -11,8 +11,9 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VueGeolocation from 'vue-browser-geolocation'
 import * as VueGoogleMaps from 'vue2-google-maps'
-import { faUtensils, faScrewdriverWrench, faPhoneFlip, faPersonBiking, faRightToBracket, faXmark, faUser, faLocationDot, faClock, faHeart} from '@fortawesome/free-solid-svg-icons'
-library.add(faUtensils, faScrewdriverWrench, faPhoneFlip, faPersonBiking, faRightToBracket, faXmark, faUser, faLocationDot, faClock, faHeart);
+import googleMapsApiKey from '@/key'
+import { faUtensils, faScrewdriverWrench, faPhoneFlip, faPersonBiking, faRightToBracket, faXmark, faUser, faLocationDot, faClock, faHeart, faStar} from '@fortawesome/free-solid-svg-icons'
+library.add(faUtensils, faScrewdriverWrench, faPhoneFlip, faPersonBiking, faRightToBracket, faXmark, faUser, faLocationDot, faClock, faHeart, faStar);
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(VueCookie)
 Vue.use(debounce)
@@ -24,7 +25,7 @@ Vue.use(Geocoder, {
   defaultCountryCode: 'PL', // e.g. 'CA'
   defaultLanguage:    'pl', // e.g. 'en'
   defaultMode:        'address', // or 'lat-lng'
-  googleMapsApiKey:   'AIzaSyD40ckrPhTz4c1PvOQxx2VWPMV_Znb_B2o'
+  googleMapsApiKey:   googleMapsApiKey
 })
 export default {
   directives: {
@@ -34,7 +35,7 @@ export default {
 
 Vue.use(VueGoogleMaps, {
   load: {
-    key: 'AIzaSyD40ckrPhTz4c1PvOQxx2VWPMV_Znb_B2o'
+    key: googleMapsApiKey
     // libraries: 'places', // This is required if you use the Autocomplete plugin
   },
   installComponents: true

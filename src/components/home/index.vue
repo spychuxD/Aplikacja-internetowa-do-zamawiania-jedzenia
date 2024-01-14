@@ -3,8 +3,8 @@
     <carousel-restaurant v-if="restaurants" :restaurants="restaurants"></carousel-restaurant>
     <address-input-home></address-input-home>
     <v-card class="mt-3">
-      <div style="font-size: 64px" class="text-overline text-center">Korzystaj z systemu na różnych urządzeniach gdziekolwiek jesteś</div>
-      <v-img style="cursor: pointer;" :src="require('@/assets/webApp/' + webApp)"></v-img>
+      <div class="text-overline text-center">Korzystaj z systemu na różnych urządzeniach gdziekolwiek jesteś</div>
+      <v-img width="900" style="cursor: pointer;" class="mx-auto" :src="require('@/assets/webApp/' + webApp)"></v-img>
     </v-card>
   </v-container>
 </template>
@@ -20,7 +20,7 @@ export default {
   },
   data() {
     return {
-      webApp: 'web_app.jpg',
+      webApp: 'web_app.png',
       interval: 3000,
       interval2: 2900,
       interval3: 3000,

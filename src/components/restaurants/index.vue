@@ -1,7 +1,7 @@
 <template>
     <v-container fluid>
       <v-card class="mt-3">
-<!--        <google-maps :height="300" :addresses="restaurantsAddresses"></google-maps>-->
+        <google-maps :height="300" :addresses="restaurantsAddresses"></google-maps>
       </v-card>
       <v-card :loading="loading" class="mt-3" flat>
         <v-card-title class="pa-0">
@@ -94,19 +94,19 @@
                     </v-card-text>
                     <v-card-actions class="pa-0">
                       <v-card-text>
-<!--                        <v-expansion-panels focusable flat>-->
-<!--                          <v-expansion-panel>-->
-<!--                            <v-expansion-panel-header text-overline class="py-0 ">-->
-<!--                              <div class="text&#45;&#45;secondary">GODZINY OTWARCIA</div>-->
-<!--                              <template v-slot:actions>-->
-<!--                                <v-icon color="primary">mdi-clock</v-icon>-->
-<!--                              </template>-->
-<!--                            </v-expansion-panel-header>-->
-<!--                            <v-expansion-panel-content class="text-overline">-->
-<!--                              <div v-for="(item, itemIndex) in restaurant.openingHours" :key="itemIndex">{{item}}</div>-->
-<!--                            </v-expansion-panel-content>-->
-<!--                          </v-expansion-panel>-->
-<!--                        </v-expansion-panels>-->
+                        <v-expansion-panels focusable flat>
+                          <v-expansion-panel>
+                            <v-expansion-panel-header text-overline class="py-0 ">
+                              <div class="text--secondary">GODZINY OTWARCIA</div>
+                              <template v-slot:actions>
+                                <v-icon color="primary">mdi-clock</v-icon>
+                              </template>
+                            </v-expansion-panel-header>
+                            <v-expansion-panel-content class="text-overline">
+                              <div v-for="(item, itemIndex) in restaurant.openingHours" :key="itemIndex">{{item}}</div>
+                            </v-expansion-panel-content>
+                          </v-expansion-panel>
+                        </v-expansion-panels>
                       </v-card-text>
                       <v-spacer></v-spacer>
                       <v-btn icon  color="primary" class="mr-3" :to="'/restaurant/'+restaurant.id+'/menu'">
@@ -132,12 +132,12 @@
   
 <script>
 import {getListItemsOrItem} from "@/functions/common";
-// import googleMaps from '../GoogleMaps.vue'
+import googleMaps from '../GoogleMaps.vue'
   export default {
     name: 'RestaurantIndex',
-    // components: {
-    //   googleMaps
-    // },
+    components: {
+      googleMaps
+    },
     data() {
       return {
         model: 0,

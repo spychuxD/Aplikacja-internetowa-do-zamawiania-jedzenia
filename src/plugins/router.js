@@ -12,6 +12,9 @@ import CartSummary from '@/components/cartSummary/index'
 import FavoriteRestaurants from '../components/restaurants/favorite/index'
 import ConfigurationIndex from '../components/configuration/index'
 import ConfigRestaurants from '../components/configuration/restaurants/show'
+import ConfigDishes from '../components/configuration/dishes/show'
+import ConfigOrders from '../components/configuration/orders/show'
+import ConfigUsers from '../components/configuration/users/show'
 import Tracking from '../components/cartSummary/tracking'
 
 Vue.use(Router);
@@ -78,6 +81,27 @@ export default new Router({
             title: 'Edycja restauracji'
           },
           component: ConfigRestaurants
+        },
+        {
+          path: '/config/dishes',
+          meta: {
+            title: 'Edycja dań'
+          },
+          component: ConfigDishes
+        },
+        {
+          path: '/config/orders',
+          meta: {
+            title: 'Edycja zamówień'
+          },
+          component: ConfigOrders
+        },
+        {
+          path: '/config/users',
+          meta: {
+            title: 'Edycja użytkowników'
+          },
+          component: ConfigUsers
         }
       ]
     },

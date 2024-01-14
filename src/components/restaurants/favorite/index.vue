@@ -77,6 +77,13 @@ export default {
     async fetchData() {
       this.loading = true
       this.restaurants = await getListItemsOrItem('favoriteRestaurants', 0, 'user')
+      if(this.restaurants === 0) {
+        this.$store.state.info.showing = false
+        this.$store.state.info.loading = false
+        this.$store.state.info.text = 'Brak ulubionych restauracji'
+        this.$store.state.info.color = 'info'
+        this.$store.state.info.showing = true
+      }
       console.log(this.restaurants)
       this.loading = false
     },

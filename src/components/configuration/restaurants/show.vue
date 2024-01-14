@@ -217,7 +217,7 @@
             </v-row>
             <v-row class="px-5 mb-15">
               <v-col>
-                <v-combobox v-model="restaurantCategories" multiple chips :items="restaurantsCategories" label="Kategoria restauracji"></v-combobox>
+                <v-combobox v-model="restaurant.restaurantCategories" multiple chips :items="restaurantsCategories" label="Kategoria restauracji"></v-combobox>
               </v-col>
               <v-col>
                 <v-checkbox v-model="newCategory" label="Zaznacz, aby dodać nową kategorię"></v-checkbox>
@@ -236,6 +236,12 @@
               </v-col>
               <v-col>
                 <v-textarea auto-grow rows="1" v-model="restaurant.restaurantCategories.description" label="Opis"></v-textarea>
+              </v-col>
+              <v-col>
+                <v-btn text @click="addNewCategory()" class="mt-3">
+                  <v-icon class="mr-3">mdi-content-save-check</v-icon>
+                    Dodaj
+                </v-btn>
               </v-col>
             </v-row>
             <v-row>
@@ -480,6 +486,18 @@ export default {
         this.restaurants = this.restaurants.map(restaurant => ({ ...restaurant, options: false }))
       }
       this.loading = false
+      this.restaurantsCategories = await getListItemsOrItem('getCategories', 0, 'api', 'admin')
+      if(!Array.isArray(this.restaurantsCategories)) {
+        this.$store.state.info.showing = false
+        this.$store.state.info.text = this.restaurantsCategories.message
+        this.$store.state.info.color = 'warning'
+        this.$store.state.info.showing = true
+        this.$cookie.delete('token')
+        setTimeout(() => {
+          this.$router.push('/home')
+          window.location.reload(true);
+        }, 1500);
+      }
     },
     newDate() {
       this.openingHoursRestaurant.push({
@@ -523,6 +541,21 @@ export default {
       this.$store.state.info.text = response.data['message']
       if(response.status === 201) {
         this.$store.state.info.color = 'success'
+      } else {
+        this.$store.state.info.color = 'warning'
+      }
+      this.$store.state.info.showing = true
+    },
+    async addNewCategory() {
+      let response = await postData('addCategory', {name: this.restaurant.restaurantCategories.name, description: this.restaurant.restaurantCategories.description}, this.$cookie.get('token'))
+      this.$store.state.info.showing = false
+      this.$store.state.info.text = response.data['message']
+      if(response.status === 201) {
+        this.$store.state.info.color = 'success'
+        this.restaurantsCategories = await getListItemsOrItem('getCategories', 0, 'api', 'admin')
+        this.restaurant.restaurantCategories.name = ''
+        this.restaurant.restaurantCategories.description = ''
+        this.newCategory = false
       } else {
         this.$store.state.info.color = 'warning'
       }
