@@ -16,6 +16,9 @@ import ConfigDishes from '../components/configuration/dishes/show'
 import ConfigOrders from '../components/configuration/orders/show'
 import ConfigUsers from '../components/configuration/users/show'
 import Tracking from '../components/cartSummary/tracking'
+import PaymentSuccess from '../components/cartSummary/paymentSuccess'
+import PaymentError from '../components/cartSummary/paymentError'
+import RestaurantsRatings from '../components/ratings/index'
 
 Vue.use(Router);
 
@@ -102,6 +105,27 @@ export default new Router({
             title: 'Edycja użytkowników'
           },
           component: ConfigUsers
+        },
+        {
+          path: '/paymentSuccess',
+          meta: {
+            title: 'Pomyślne zrealizowanie płatności'
+          },
+          component: PaymentSuccess
+        },
+        {
+          path: '/paymentError',
+          meta: {
+            title: 'Niepoprawne zrealizowanie płatności'
+          },
+          component: PaymentError
+        },
+        {
+          path: '/restaurantsRatings',
+          meta: {
+            title: 'Opinie restauracji'
+          },
+          component: RestaurantsRatings
         }
       ]
     },

@@ -9,6 +9,12 @@
         <v-col v-for="(restaurant, index) in restaurants" class="col-sm-6 col-md-4 col-lg-2" :key="index">
           <v-card class="pa-3">
             <v-card-title class="pa-0">
+              <v-btn v-if="!restaurant.isFavorite" class="ml-auto" icon color="error" @click="addToFavorite(restaurant.id)">
+                <v-icon>mdi-heart-multiple-outline</v-icon>
+              </v-btn>
+              <v-btn v-if="restaurant.isFavorite" class="ml-auto" icon color="error" @click="removeFromFavorite(restaurant.id)">
+                <v-icon>mdi-heart-multiple</v-icon>
+              </v-btn>
               <v-img
                   style="cursor: pointer;"
                   :src="require('@/assets/restaurants/' + restaurant.fileName)"
@@ -59,6 +65,7 @@
 </template>
 <script>
 import {getListItemsOrItem} from "@/functions/common";
+import axios from "axios";
 
 export default {
   name: 'favoriteRestaurants',
@@ -72,11 +79,12 @@ export default {
   },
   created() {
     this.fetchData()
+
   },
   methods: {
     async fetchData() {
       this.loading = true
-      this.restaurants = await getListItemsOrItem('favoriteRestaurants', 0, 'user')
+      this.restaurants = await getListItemsOrItem('favoriteRestaurants', 0, 'api')
       if(this.restaurants === 0) {
         this.$store.state.info.showing = false
         this.$store.state.info.loading = false
@@ -84,11 +92,53 @@ export default {
         this.$store.state.info.color = 'info'
         this.$store.state.info.showing = true
       }
-      console.log(this.restaurants)
+      this.restaurants.forEach((restaurant, index) => {
+        const isFavorite = true;
+        this.$set(this.restaurants, index, { ...restaurant, isFavorite });
+      });
       this.loading = false
     },
     imageLoadedFn() {
       this.imageLoaded = true;
+    },
+    async removeFromFavorite(id) {
+      this.$store.state.info.showing = false
+      this.$store.state.info.loading = true
+      this.$store.state.info.text = 'Usuwanie z ulubionych...'
+      this.$store.state.info.color = 'info'
+      this.$store.state.info.showing = true
+
+      try {
+        const response = await axios.delete('http://localhost:8000/api/removeFromFavorite/' + id, {
+          headers: {
+            Authorization: `Bearer ${this.$cookie.get('token')}`
+          }
+        });
+
+        this.$store.state.info.showing = false
+        this.$store.state.info.loading = false
+        this.$store.state.info.text = response.data['message']
+
+        if(response.status === 200) {
+          this.$store.state.info.color = 'success'
+        } else {
+          this.$store.state.info.color = 'warning'
+        }
+      } catch (error) {
+        console.error(error);
+        this.$store.state.info.showing = false
+        this.$store.state.info.loading = false
+        if (error.response) {
+          this.$store.state.info.text = error.response.data.message || 'Wystąpił błąd';
+          this.$store.state.info.color = 'warning'
+        } else {
+          this.$store.state.info.text = 'Błąd sieciowy';
+          this.$store.state.info.color = 'error'
+        }
+      }
+
+      this.$store.state.info.showing = true
+      await this.fetchData()
     }
   }
 }

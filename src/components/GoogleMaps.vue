@@ -23,6 +23,7 @@
           v-if="lat && lng"
           :position="{lat: lat, lng: lng}"
           :clickable="false"
+          :icon="'https://i.ibb.co/bNh2kVm/bike2.png'"
       />
     </GmapMap>
   </div>

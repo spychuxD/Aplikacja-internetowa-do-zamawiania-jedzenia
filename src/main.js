@@ -41,7 +41,7 @@ Vue.use(VueGoogleMaps, {
   installComponents: true
 })
 
-router.push('/home')
+// router.push('/home')
 // if (!VueCookie.get('token')) {
 //   router.push('/home')
 // }

@@ -11,24 +11,44 @@
               <v-col class="col-5">
                 <div class="text-overline text-center mt-3 mb-6">Adres dostawy</div>
                 <v-text-field
+                    disabled
                     dense
-                    v-model="address"
-                    label="Adres"
+                    v-model="clientAddress.address_line_1"
+                    label="Ulica i numer"
                     append-outer-icon="mdi-map-marker"
                 ></v-text-field>
+                <v-row>
+                  <v-col>
+                    <v-text-field
+                        disabled
+                        dense
+                        v-model="clientAddress.zip_code"
+                        label="Kod pocztowy"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col>
+                    <v-text-field
+                        disabled
+                        dense
+                        v-model="clientAddress.city"
+                        label="Miasto"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
                 <v-text-field
+                    disabled
                     dense
                     v-model="email"
                     label="Email"
                     append-outer-icon="mdi-at"
                 ></v-text-field>
-                <v-select
+                <v-text-field
+                    disabled
+                    dense
+                    v-model="status"
+                    label="Status dostawy"
                     append-outer-icon="mdi-home-clock"
-                    outlined
-                    v-model="hourModel"
-                    label="Godzina dostawy"
-                    :items="hours"
-                ></v-select>
+                ></v-text-field>
               </v-col>
               <v-col class="col-7">
                 <google-maps :addresses="courierAddress" :lat="lat" :lng="lng" :height="600"></google-maps>
@@ -52,6 +72,8 @@ export default {
   },
   data() {
     return {
+      clientAddress : {},
+      status: '',
       lat: 0,
       lng: 0,
       tabIndex: 0,
@@ -74,6 +96,7 @@ export default {
     }
   },
   created() {
+    this.getOrder()
     this.intervalId = setInterval(this.getCourierLocation, 2000);
   },
   destroyed() {
@@ -88,6 +111,20 @@ export default {
         console.log(response);
       } catch (error) {
         console.error('Błąd podczas pobierania lokalizacji kuriera:', error);
+      }
+    },
+    async getOrder() {
+      const response = await getListItemsOrItem('getOrder', localStorage.getItem('order'))
+      if(response) {
+        this.clientAddress.address_line_1 = response.userAddressLine1
+        this.clientAddress.zip_code = response.userAddressZipCode
+        this.clientAddress.city = response.userAddressCity
+        if(response.status === 'PENDING') {
+          this.status = 'W trakcie przygotowania'
+        }
+        if(response.status === 'ACCEPTED') {
+          this.status = 'Kurier w drodze do restauracji'
+        }
       }
     }
   }

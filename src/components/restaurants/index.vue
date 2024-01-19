@@ -1,7 +1,7 @@
 <template>
     <v-container fluid>
       <v-card class="mt-3">
-        <google-maps :height="300" :addresses="restaurantsAddresses"></google-maps>
+<!--        <google-maps :height="300" :addresses="restaurantsAddresses"></google-maps>-->
       </v-card>
       <v-card :loading="loading" class="mt-3" flat>
         <v-card-title class="pa-0">
@@ -71,6 +71,12 @@
                 <v-col v-for="(restaurant, index) in restaurants" class="col-sm-6 col-md-4 col-lg-2" :key="index">
                   <v-card class="pa-3">
                     <v-card-title class="pa-0">
+                      <v-btn v-if="isUser && !restaurant.isFavorite" class="ml-auto" icon color="error" @click="addToFavorite(restaurant.id)">
+                        <v-icon>mdi-heart-multiple-outline</v-icon>
+                      </v-btn>
+                      <v-btn v-if="isUser && restaurant.isFavorite" class="ml-auto" icon color="error" @click="removeFromFavorite(restaurant.id)">
+                        <v-icon>mdi-heart-multiple</v-icon>
+                      </v-btn>
                       <v-img
                           style="cursor: pointer;"
                           :src="require('@/assets/restaurants/' + restaurant.fileName)"
@@ -131,15 +137,17 @@
 </template>
   
 <script>
-import {getListItemsOrItem} from "@/functions/common";
-import googleMaps from '../GoogleMaps.vue'
+import {getListItemsOrItem, postData} from "@/functions/common";
+import axios from "axios";
+// import googleMaps from '../GoogleMaps.vue'
   export default {
     name: 'RestaurantIndex',
     components: {
-      googleMaps
+      // googleMaps
     },
     data() {
       return {
+        isUser: false,
         model: 0,
         delay: 300,
         imageLoaded: false,
@@ -152,6 +160,10 @@ import googleMaps from '../GoogleMaps.vue'
     },
     created() {
       this.fetchData()
+      if(this.$cookie.get('token')) {
+        this.isUser = true
+      }
+      this.getFavoriteRestaurants()
     },
     methods: {
       async fetchData() {
@@ -168,7 +180,78 @@ import googleMaps from '../GoogleMaps.vue'
       },
       imageLoadedFn() {
         this.imageLoaded = true;
+      },
+      async getFavoriteRestaurants() {
+        if(this.$cookie.get('token')) {
+          let response = await getListItemsOrItem('favoriteRestaurants', 0, 'api')
+          if (response.length > 0 && this.restaurants.length > 0) {
+            const favoriteRestaurantIds = response.map(fav => fav.id)
+            this.restaurants.forEach((restaurant, index) => {
+              const isFavorite = favoriteRestaurantIds.includes(restaurant.id);
+              this.$set(this.restaurants, index, { ...restaurant, isFavorite });
+            });
+          }
+        }
+      },
+      async addToFavorite(id) {
+        this.$store.state.info.showing = false
+        this.$store.state.info.loading = true
+        this.$store.state.info.text = 'Dodawanie do ulubionych...'
+        this.$store.state.info.color = 'info'
+        this.$store.state.info.showing = true
+        const response = await postData('addToFavorite', id, this.$cookie.get('token'))
+        this.$store.state.info.showing = false
+        this.$store.state.info.loading = false
+        this.$store.state.info.text = response.data['message']
+        if(response.status === 201) {
+          this.$store.state.info.color = 'success'
+        } else {
+          this.$store.state.info.color = 'warning'
+        }
+        this.$store.state.info.showing = true
+        await this.getFavoriteRestaurants()
+      },
+      async removeFromFavorite(id) {
+        this.$store.state.info.showing = false
+        this.$store.state.info.loading = true
+        this.$store.state.info.text = 'Usuwanie z ulubionych...'
+        this.$store.state.info.color = 'info'
+        this.$store.state.info.showing = true
+
+        try {
+          const response = await axios.delete('http://localhost:8000/api/removeFromFavorite/' + id, {
+            headers: {
+              Authorization: `Bearer ${this.$cookie.get('token')}`
+            }
+          });
+
+          this.$store.state.info.showing = false
+          this.$store.state.info.loading = false
+          this.$store.state.info.text = response.data['message']
+
+          if(response.status === 200) {
+            this.$store.state.info.color = 'success'
+          } else {
+            this.$store.state.info.color = 'warning'
+          }
+        } catch (error) {
+          console.error(error);
+          this.$store.state.info.showing = false
+          this.$store.state.info.loading = false
+          if (error.response) {
+            this.$store.state.info.text = error.response.data.message || 'Wystąpił błąd';
+            this.$store.state.info.color = 'warning'
+          } else {
+            this.$store.state.info.text = 'Błąd sieciowy';
+            this.$store.state.info.color = 'error'
+          }
+        }
+
+        this.$store.state.info.showing = true
+        await this.getFavoriteRestaurants()
       }
+
+
     }
   }
 </script>

@@ -73,10 +73,26 @@
                 <div class="text-overline text-center mt-3 mb-6">Adres dostawy</div>
                 <v-text-field
                     dense
-                    v-model="address"
-                    label="Adres"
+                    v-model="clientAddress.address_line_1"
+                    label="Ulica i numer"
                     append-outer-icon="mdi-map-marker"
                 ></v-text-field>
+                <v-row>
+                  <v-col>
+                    <v-text-field
+                        dense
+                        v-model="clientAddress.zip_code"
+                        label="Kod pocztowy"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col>
+                    <v-text-field
+                        dense
+                        v-model="clientAddress.city"
+                        label="Miasto"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
                 <v-text-field
                     dense
                     v-model="email"
@@ -92,42 +108,42 @@
                 ></v-select>
               </v-col>
               <v-col class="col-7">
-                <google-maps :addresses="clientAddress" :height="300"></google-maps>
+                <google-maps :addresses="addresses" :height="300"></google-maps>
               </v-col>
             </v-row>
             <v-row>
-              <v-expansion-panels focusable flat>
-                <v-expansion-panel>
-                  <v-expansion-panel-header>
-                    <div class="text-overline text-center text--secondary">Wybierz metodę płatności</div>
-                    <template v-slot:actions>
-                      <v-icon color="secondary">mdi-arrow-down</v-icon>
-                    </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content class="col-12">
-                    <v-radio-group v-model="paymentType" row>
-                      <v-col>
-                        <v-row>
-                          <v-radio label="BLIK" :value="1"></v-radio>
-                          <v-img :src="require('@/assets/icons/' + 'blikIcon.png')" max-height="25" max-width="25" class="ml-5"></v-img>
-                        </v-row>
-                      </v-col>
-                      <v-col>
-                        <v-row>
-                          <v-radio label="Pay-Pal" :value="2"></v-radio>
-                          <v-img :src="require('@/assets/icons/' + 'paypalIcon.png')" max-height="25" max-width="25" class="ml-5"></v-img>
-                        </v-row>
-                      </v-col>
-                      <v-col>
-                        <v-row>
-                          <v-radio label="Tpay" :value="3"></v-radio>
-                          <v-img :src="require('@/assets/icons/' + 'tpayIcon.png')" max-height="25" max-width="25" class="ml-5"></v-img>
-                        </v-row>
-                      </v-col>
-                    </v-radio-group>
-                  </v-expansion-panel-content>
-                </v-expansion-panel>
-              </v-expansion-panels>
+<!--              <v-expansion-panels focusable flat>-->
+<!--                <v-expansion-panel>-->
+<!--                  <v-expansion-panel-header>-->
+<!--                    <div class="text-overline text-center text&#45;&#45;secondary">Wybierz metodę płatności</div>-->
+<!--                    <template v-slot:actions>-->
+<!--                      <v-icon color="secondary">mdi-arrow-down</v-icon>-->
+<!--                    </template>-->
+<!--                  </v-expansion-panel-header>-->
+<!--                  <v-expansion-panel-content class="col-12">-->
+<!--                    <v-radio-group v-model="paymentType" row>-->
+<!--                      <v-col>-->
+<!--                        <v-row>-->
+<!--                          <v-radio label="BLIK" :value="1"></v-radio>-->
+<!--                          <v-img :src="require('@/assets/icons/' + 'blikIcon.png')" max-height="25" max-width="25" class="ml-5"></v-img>-->
+<!--                        </v-row>-->
+<!--                      </v-col>-->
+<!--                      <v-col>-->
+<!--                        <v-row>-->
+<!--                          <v-radio label="Pay-Pal" :value="2"></v-radio>-->
+<!--                          <v-img :src="require('@/assets/icons/' + 'paypalIcon.png')" max-height="25" max-width="25" class="ml-5"></v-img>-->
+<!--                        </v-row>-->
+<!--                      </v-col>-->
+<!--                      <v-col>-->
+<!--                        <v-row>-->
+<!--                          <v-radio label="Tpay" :value="3"></v-radio>-->
+<!--                          <v-img :src="require('@/assets/icons/' + 'tpayIcon.png')" max-height="25" max-width="25" class="ml-5"></v-img>-->
+<!--                        </v-row>-->
+<!--                      </v-col>-->
+<!--                    </v-radio-group>-->
+<!--                  </v-expansion-panel-content>-->
+<!--                </v-expansion-panel>-->
+<!--              </v-expansion-panels>-->
               <v-btn block class="ml-auto mb-3 pt-6 pb-6" @click="payForOrder">Do zapłaty: <span class=" text--primary mx-3" style="font-weight: 900">{{totalCost.toFixed(2)}} zł</span>KLIKNIJ ABY PRZEJŚĆ DO PŁATNOŚCI</v-btn>
             </v-row>
           </v-card-text>
@@ -139,7 +155,7 @@
 
 <script>
 import googleMaps from '../GoogleMaps'
-import { pay } from "@/functions/common";
+import {getListItemsOrItem, pay} from "@/functions/common";
 
 export default {
   name: 'cartSummary',
@@ -151,7 +167,7 @@ export default {
       tabIndex: 0,
       totalCost: 0,
       email: 'test@test.pl',
-      address: 'Mazurska 66/79, 25-345 Kielce',
+      addresses: [],
       sparkline: {
         value: [0, 10, 10, 10],
         fill: 'primary',
@@ -164,11 +180,12 @@ export default {
           text: 'JAK NAJSZYBCIEJ'
         }
       ],
-      clientAddress: {address_line_1: 'Mazurska 66', address_line_2: '', city: 'Kielce', zip_code: '25-345'}
+      clientAddress: {address_line_1: '', address_line_2: '', city: '', zip_code: ''}
     }
   },
   created() {
     this.getCart()
+    this.getAddress()
   },
   methods: {
     getCart() {
@@ -188,6 +205,11 @@ export default {
       const amount = JSON.parse(localStorage.getItem('totalCost'))
       this.$store.state.cart = JSON.parse(localStorage.getItem('cart'))
       const hiddenDescription = JSON.parse(localStorage.getItem('restaurant'))
+      this.$store.state.info.showing = false
+      this.$store.state.info.text = 'Wyszukiwanie wolnych kurierów oraz tworzenie płatności...'
+      this.$store.state.info.color = 'info'
+      this.$store.state.info.loading = true
+      this.$store.state.info.showing = true
       const address = this.clientAddress.address_line_1 + ', ' + this.clientAddress.zip_code + ' ' + this.clientAddress.city
       if(amount && hiddenDescription) {
         const response = await pay(amount, hiddenDescription, this.email, this.$store.state.cart, amount, address, this.$cookie.get('token'))
@@ -197,9 +219,21 @@ export default {
           this.$store.state.info.color = 'warning'
           this.$store.state.info.showing = true
         } else {
-          window.location.href = response.data
+          localStorage.setItem('order', response.data.order)
+          window.location.href = response.data.path
         }
       }
+    },
+    async getAddress() {
+      const response = await getListItemsOrItem('getUserAddress', 0, 'api')
+      if(response !== 0) {
+        this.clientAddress.address_line_1 = response.street + ' ' + response.parcelNumber + '/' + response.apartmentNumber
+        this.clientAddress.address_line_2 = ''
+        this.clientAddress.zip_code = response.postcode
+        this.clientAddress.city = response.city
+        this.addresses.push(this.clientAddress)
+      }
+      // this.clientAddress.address_line_1 = response
     }
   }
 }

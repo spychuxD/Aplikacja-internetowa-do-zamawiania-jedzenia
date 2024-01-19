@@ -1,6 +1,7 @@
 import axios from "axios";
 import VueJwtDecode from 'vue-jwt-decode'
 import VueCookie from "vue-cookie";
+
 // function responseAlert (response, title = 'Błąd podczas pobierania danych') {
 //     let text = ''
 //     for (let i in response.data) {
@@ -47,12 +48,16 @@ export async function postData(path, data, token) {
         ).catch(reason => {
             console.log(reason.response)
             if(reason.response.status === 401 && reason.response.data.message === 'JWT Token not found') {
+                VueCookie.delete('token')
+                window.location.href = '/home'
                 return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'}
             }
             if(reason.response.status === 401 && reason.response.data.message === 'Expired JWT Token') {
+                window.location.href = '/home'
                 return {status: 207, data: 'Wygasł dostęp.'} //trzeba dodac refreshToken i wyrzucać do logowania
             }
             if(reason.response.status === 403 && reason.response.data.detail === 'Access Denied.') {
+                window.location.href = '/home'
                 return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'} //trzeba dodac refreshToken i wyrzucać do logowania
             }
         })
@@ -70,15 +75,88 @@ export async function postData(path, data, token) {
         ).catch(reason => {
             console.log(reason.response)
             if(reason.response.status === 401 && reason.response.data.message === 'JWT Token not found') {
+                window.location.href = '/home'
                 return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'}
             }
             if(reason.response.status === 401 && reason.response.data.message === 'Expired JWT Token') {
+                window.location.href = '/home'
                 return {status: 207, data: 'Wygasł dostęp.'} //trzeba dodac refreshToken i wyrzucać do logowania
             }
             if(reason.response.status === 403 && reason.response.data.detail === 'Access Denied.') {
+                window.location.href = '/home'
                 return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'} //trzeba dodac refreshToken i wyrzucać do logowania
             }
         })
+        return {status: response.status, data: response.data}
+    }
+    if(path === 'passwordReset') {
+        const response = await axios.post('http://localhost:8000/common/passwordReset', {
+                email: data
+            }
+        ).catch(reason => {
+            console.log(reason.response)
+            if(reason.response.status === 401 && reason.response.data.message === 'JWT Token not found') {
+                window.location.href = '/home'
+                return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'}
+            }
+            if(reason.response.status === 401 && reason.response.data.message === 'Expired JWT Token') {
+                window.location.href = '/home'
+                return {status: 207, data: 'Wygasł dostęp.'} //trzeba dodac refreshToken i wyrzucać do logowania
+            }
+            if(reason.response.status === 403 && reason.response.data.detail === 'Access Denied.') {
+                window.location.href = '/home'
+                return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'} //trzeba dodac refreshToken i wyrzucać do logowania
+            }
+        })
+        return {status: response.status, data: response.data}
+    }
+    if(path === 'addToFavorite') {
+        const response = await axios.post('http://localhost:8000/api/addToFavorite/'+data, {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        ).catch(reason => {
+            console.log(reason.response)
+            if(reason.response.status === 401 && reason.response.data.message === 'JWT Token not found') {
+                window.location.href = '/home'
+                return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'}
+            }
+            if(reason.response.status === 401 && reason.response.data.message === 'Expired JWT Token') {
+                window.location.href = '/home'
+                return {status: 207, data: 'Wygasł dostęp.'} //trzeba dodac refreshToken i wyrzucać do logowania
+            }
+            if(reason.response.status === 403 && reason.response.data.detail === 'Access Denied.') {
+                window.location.href = '/home'
+                return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'} //trzeba dodac refreshToken i wyrzucać do logowania
+            }
+        })
+        return {status: response.status, data: response.data}
+    }
+    if(path === 'removeFromFavorite') {
+        const response = axios.delete('http://localhost:8000/api/removeFromFavorite/'+data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        ).catch(reason => {
+            console.log(reason.response)
+            if(reason.response.status === 401 && reason.response.data.message === 'JWT Token not found') {
+                window.location.href = '/home'
+                return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'}
+            }
+            if(reason.response.status === 401 && reason.response.data.message === 'Expired JWT Token') {
+                window.location.href = '/home'
+                return {status: 207, data: 'Wygasł dostęp.'} //trzeba dodac refreshToken i wyrzucać do logowania
+            }
+            if(reason.response.status === 403 && reason.response.data.detail === 'Access Denied.') {
+                window.location.href = '/home'
+                return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'} //trzeba dodac refreshToken i wyrzucać do logowania
+            }
+        })
+        console.log(response)
         return {status: response.status, data: response.data}
     }
 }
@@ -199,7 +277,21 @@ export async function getListItemsOrItem(name, id = 0, state = 'common', role = 
             return 0;
         }
     } catch (error) {
-        console.log(error.response.data)
+        if(error.response.status === 401 && error.response.data.message === 'JWT Token not found') {
+            VueCookie.delete('token')
+            window.location.href = '/home'
+            return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'}
+        }
+        if(error.response.status === 401 && error.response.data.message === 'Expired JWT Token') {
+            VueCookie.delete('token')
+            window.location.href = '/home'
+            return {status: 207, data: 'Wygasł dostęp.'} //trzeba dodac refreshToken i wyrzucać do logowania
+        }
+        if(error.response.status === 403 && error.response.data.detail === 'Access Denied.') {
+            VueCookie.delete('token')
+            window.location.href = '/home'
+            return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'} //trzeba dodac refreshToken i wyrzucać do logowania
+        }
         return error.response.data
     }
 

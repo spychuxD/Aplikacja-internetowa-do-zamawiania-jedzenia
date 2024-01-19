@@ -70,6 +70,9 @@
                       <font-awesome-icon size="lg" icon="fa-solid fa-xmark" class="mr-2"/>
                       Zamknij
                     </v-btn>
+                    <v-btn text @click="showResetPassword = true">
+                      Nie pamiętam hasła
+                    </v-btn>
                     <v-btn text @click="handleSubmitLogin()">
                       <font-awesome-icon size="lg" icon="fa-solid fa-right-to-bracket" class="mr-2"/>
                       Zaloguj
@@ -183,6 +186,22 @@
             </v-tabs-items>
           </v-card>
         </v-dialog>
+      <v-dialog v-model="showResetPassword" :max-width="$vuetify.breakpoint.thresholds.sm">
+        <v-card>
+          <v-card-title>
+            Resetowanie hasła
+          </v-card-title>
+          <v-card-text>
+            <v-text-field
+                label="Wpisz swój email"
+                v-model="resetEmail"
+            ></v-text-field>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn text @click="handleResetPassword()">Wyślij</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-app-bar>
 
     <!-- Sizes your content based upon application components -->
@@ -230,7 +249,7 @@
 </template>
 
 <script>
-import {checkRoles, login, register} from "@/functions/common";
+import {checkRoles, login, postData, register} from "@/functions/common";
 import axios from "axios";
 
 
@@ -238,14 +257,16 @@ import axios from "axios";
     name: 'MainLayout',
     data() {
       return {
+        resetEmail: '',
+        showResetPassword: false,
         menu: false,
         footerTextColor: null,
         mainTabs: [
           {value: 1, text:'Restauracje', icon: 'fa-solid fa-utensils', path: '/restaurants', roles: ['ROLE_USER'], disabled: false},
-          {value: 2, text:'Dostawa', icon: 'fa-solid fa-person-biking', path: '/trackingOrder/1', roles: ['ROLE_USER'], disabled: true},
+          {value: 2, text:'Dostawa', icon: 'fa-solid fa-person-biking', path: '/trackingOrder/' + localStorage.getItem('order'), roles: ['ROLE_USER'], disabled: true},
           {value: 3, text:'Kontakt', icon: 'fa-solid fa-phone-flip', path: '/test',  roles: ['ROLE_USER'], disabled: false},
           {value: 4, text:'Ulubione', icon: 'fa-solid fa-heart', path: '/favoriteRestaurants',  roles: ['ROLE_USER'], disabled: true},
-          {value: 5, text:'Oceny', icon: 'fa-solid fa-star', path: '/rating',  roles: ['ROLE_USER'], disabled: true},
+          {value: 5, text:'Oceny', icon: 'fa-solid fa-star', path: '/restaurantsRatings',  roles: ['ROLE_USER'], disabled: true},
           {value: 6, text:'Konfiguracja', icon: 'fa-solid fa-screwdriver-wrench', path: '/config',  roles: ['ROLE_SUPERUSER'], disabled: true}
         ],
         userMenu: [
@@ -354,7 +375,11 @@ import axios from "axios";
       async logIn() {
         const email = this.userLogin.email
         const password = this.userLogin.password
-
+        this.$store.state.info.showing = false
+        this.$store.state.info.loading = true
+        this.$store.state.info.text = 'Weryfikowanie danych...'
+        this.$store.state.info.color = 'info'
+        this.$store.state.info.showing = true
         const response = await login(email, password)
         if(response !== -1) {
           this.$cookie.set('token', response, 1)
@@ -390,6 +415,17 @@ import axios from "axios";
           window.location.reload(true);
         }, 1500);
         this.$router.push('/home')
+      },
+      async handleResetPassword() {
+        let response = await postData('passwordReset', {email: this.resetEmail})
+        this.$store.state.info.showing = false
+        this.$store.state.info.text = response.data['message']
+        if(response.status === 201) {
+          this.$store.state.info.color = 'success'
+        } else {
+          this.$store.state.info.color = 'warning'
+        }
+        this.$store.state.info.showing = true
       },
       async setLocation() {
         const response = await axios.get('http://localhost:8000/api/findCourierOrder',
