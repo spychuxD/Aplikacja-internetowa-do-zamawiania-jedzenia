@@ -4,54 +4,93 @@
       <v-col class="col-12">
         <v-card class="elevation-2">
           <v-card-title class="secondary text-overline">
-            ADRES I CZAS DOSTAWY
+            DOSTAWA
           </v-card-title>
           <v-card-text class="pt-3">
             <v-row class="justify-center align-center pa-0">
               <v-col class="col-5">
-                <div class="text-overline text-center mt-3 mb-6">Adres dostawy</div>
-                <v-text-field
-                    disabled
-                    dense
-                    v-model="clientAddress.address_line_1"
-                    label="Ulica i numer"
-                    append-outer-icon="mdi-map-marker"
-                ></v-text-field>
-                <v-row>
-                  <v-col>
+                <v-card :disabled="added">
+                  <v-card-title class="secondary text-overline">
+                    <v-icon color="primary" class="mr-3">mdi-star</v-icon>
+                    <div>Oceń</div>
+                  </v-card-title>
+                  <v-card-text>
+                    <v-rating
+                        class="mx-auto"
+                        v-model="value"
+                        background-color="white"
+                        color="yellow accent-4"
+                        dense
+                        half-increments
+                        hover
+                        size="64"
+                    ></v-rating>
+                    <v-textarea v-model="description" label="Podziel się swoją opinią"></v-textarea>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text large @click="addRating()"><v-icon>mdi-plus</v-icon>Dodaj</v-btn>
+                  </v-card-actions>
+                </v-card>
+                <v-card class="mt-3">
+                  <v-card-title class="secondary text-overline">
+                    <v-icon color="primary" class="mr-3">mdi-information</v-icon>
+                    <div>Informacje</div>
+                  </v-card-title>
+                  <v-card-text>
+                    <div class="text-overline text-center mt-3 mb-6">Adres dostawy</div>
                     <v-text-field
                         disabled
                         dense
-                        v-model="clientAddress.zip_code"
-                        label="Kod pocztowy"
+                        v-model="clientAddress.address_line_1"
+                        label="Ulica i numer"
+                        append-outer-icon="mdi-map-marker"
                     ></v-text-field>
-                  </v-col>
-                  <v-col>
+                    <v-row>
+                      <v-col>
+                        <v-text-field
+                            disabled
+                            dense
+                            v-model="clientAddress.zip_code"
+                            label="Kod pocztowy"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col>
+                        <v-text-field
+                            disabled
+                            dense
+                            v-model="clientAddress.city"
+                            label="Miasto"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
                     <v-text-field
                         disabled
                         dense
-                        v-model="clientAddress.city"
-                        label="Miasto"
+                        v-model="email"
+                        label="Email"
+                        append-outer-icon="mdi-at"
                     ></v-text-field>
-                  </v-col>
-                </v-row>
-                <v-text-field
-                    disabled
-                    dense
-                    v-model="email"
-                    label="Email"
-                    append-outer-icon="mdi-at"
-                ></v-text-field>
-                <v-text-field
-                    disabled
-                    dense
-                    v-model="status"
-                    label="Status dostawy"
-                    append-outer-icon="mdi-home-clock"
-                ></v-text-field>
+                    <v-text-field
+                        disabled
+                        dense
+                        v-model="status"
+                        label="Status dostawy"
+                        append-outer-icon="mdi-home-clock"
+                    ></v-text-field>
+                  </v-card-text>
+                </v-card>
               </v-col>
               <v-col class="col-7">
-                <google-maps :addresses="courierAddress" :lat="lat" :lng="lng" :height="600"></google-maps>
+                <v-card>
+                  <v-card-title class="secondary text-overline">
+                    <v-icon color="primary" class="mr-3">mdi-map</v-icon>
+                    <div>Mapa</div>
+                  </v-card-title>
+                  <v-card-text class="pa-0">
+                    <google-maps :addresses="courierAddress" :lat="lat" :lng="lng" :height="600"></google-maps>
+                  </v-card-text>
+                </v-card>
               </v-col>
             </v-row>
           </v-card-text>
@@ -63,7 +102,7 @@
 
 <script>
 import googleMaps from '../GoogleMaps'
-import {getListItemsOrItem} from "@/functions/common";
+import {getListItemsOrItem, postData} from "@/functions/common";
 
 export default {
   name: 'trackingOrder',
@@ -72,6 +111,8 @@ export default {
   },
   data() {
     return {
+      value: 4.5,
+      description: '',
       clientAddress : {},
       status: '',
       lat: 0,
@@ -92,7 +133,9 @@ export default {
           text: 'JAK NAJSZYBCIEJ'
         }
       ],
-      courierAddress: [{address_line_1: 'Chęcińska 16B', address_line_2: '', city: 'Kielce', zip_code: '25-020'}]
+      courierAddress: [{address_line_1: 'Chęcińska 16B', address_line_2: '', city: 'Kielce', zip_code: '25-020'}],
+      restaurant: null,
+      added: false
     }
   },
   created() {
@@ -115,10 +158,12 @@ export default {
     },
     async getOrder() {
       const response = await getListItemsOrItem('getOrder', localStorage.getItem('order'))
+      console.log('order',response)
       if(response) {
         this.clientAddress.address_line_1 = response.userAddressLine1
         this.clientAddress.zip_code = response.userAddressZipCode
         this.clientAddress.city = response.userAddressCity
+        this.restaurant = response.restaurantId
         if(response.status === 'PENDING') {
           this.status = 'W trakcie przygotowania'
         }
@@ -126,6 +171,18 @@ export default {
           this.status = 'Kurier w drodze do restauracji'
         }
       }
+    },
+    async addRating() {
+      let response = await postData('addRating', {id: this.restaurant, value: this.value, description: this.description}, this.$cookie.get('token'))
+      this.$store.state.info.showing = false
+      this.$store.state.info.text = response.data['message']
+      if(response.status === 201) {
+        this.added = true
+        this.$store.state.info.color = 'success'
+      } else {
+        this.$store.state.info.color = 'warning'
+      }
+      this.$store.state.info.showing = true
     }
   }
 }

@@ -159,6 +159,56 @@ export async function postData(path, data, token) {
         console.log(response)
         return {status: response.status, data: response.data}
     }
+    if(path === 'addRating') {
+        let response
+        if(token) {
+            response = await axios.post('http://localhost:8000/common/addRating/'+data.id, {
+                    value: data.value,
+                    description: data.description
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            ).catch(reason => {
+                console.log(reason.response)
+                if(reason.response.status === 401 && reason.response.data.message === 'JWT Token not found') {
+                    window.location.href = '/home'
+                    return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'}
+                }
+                if(reason.response.status === 401 && reason.response.data.message === 'Expired JWT Token') {
+                    window.location.href = '/home'
+                    return {status: 207, data: 'Wygasł dostęp.'} //trzeba dodac refreshToken i wyrzucać do logowania
+                }
+                if(reason.response.status === 403 && reason.response.data.detail === 'Access Denied.') {
+                    window.location.href = '/home'
+                    return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'} //trzeba dodac refreshToken i wyrzucać do logowania
+                }
+            })
+        } else {
+             response = await axios.post('http://localhost:8000/common/addRating/'+data.id, {
+                    value: data.value,
+                    description: data.description
+                }
+            ).catch(reason => {
+                console.log(reason.response)
+                if(reason.response.status === 401 && reason.response.data.message === 'JWT Token not found') {
+                    window.location.href = '/home'
+                    return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'}
+                }
+                if(reason.response.status === 401 && reason.response.data.message === 'Expired JWT Token') {
+                    window.location.href = '/home'
+                    return {status: 207, data: 'Wygasł dostęp.'} //trzeba dodac refreshToken i wyrzucać do logowania
+                }
+                if(reason.response.status === 403 && reason.response.data.detail === 'Access Denied.') {
+                    window.location.href = '/home'
+                    return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'} //trzeba dodac refreshToken i wyrzucać do logowania
+                }
+            })
+        }
+        return {status: response.status, data: response.data}
+    }
 }
 
 export async function pay(amount, hiddenDescription, email, cart, cost, address, token = null){

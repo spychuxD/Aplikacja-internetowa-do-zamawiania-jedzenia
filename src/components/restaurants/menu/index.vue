@@ -81,6 +81,51 @@
         <v-card class="mt-3">
           <google-maps :height="300" :addresses="restaurantsAddress"></google-maps>
         </v-card>
+          <v-card :loading="loading" class="mt-3">
+            <v-card-title class="secondary text-overline">
+              <v-icon color="primary">mdi-star</v-icon>
+              <div class="ml-3">OPINIE O RESTAURACJI</div>
+              <v-spacer></v-spacer>
+                                <v-chip color="primary" @click="rating = true">
+                                  <v-icon class="mr-2">mdi-star</v-icon>
+                                  <span style="font-weight: 900">Oceń !</span>
+                                </v-chip>
+            </v-card-title>
+            <v-card-text class="px-8 py-4">
+              <v-card v-for="(rating, index) in restaurantRatings" :key="index" class="mt-3">
+                <v-card-text>
+                  <v-row class="mt-3">
+                    <v-rating
+                        class="mx-auto"
+                        v-model="rating.value"
+                        background-color="white"
+                        color="yellow accent-4"
+                        dense
+                        half-increments
+                        hover
+                        size="32"
+                        readonly
+                    ></v-rating>
+                  </v-row>
+                  <v-row class="my-4 px-3">
+                    <v-col class="col-12">
+                      <div v-if="rating.description" class="text-overline text-center">{{rating.description}}</div>
+                      <div v-else class="text-overline text-center">Brak opisu</div>
+                    </v-col>
+                  </v-row>
+                  <v-row class=" px-3">
+                    <v-col class="col-6">
+                      <div class="text-caption text-left">Użytkownik:</div>
+                      <div class="text-caption text-left">{{rating.userEmail}}</div>
+                    </v-col>
+                    <v-col class="col-6">
+                      <div class="text-caption text-right">{{rating.date}}</div>
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+              </v-card>
+            </v-card-text>
+          </v-card>
       </v-col>
     </v-row>
     <cart-button-with-dialog :cart="$store.state.cart" :add-item="addItem" :remove-item="removeItem" :delete-item="deleteItem"></cart-button-with-dialog>
@@ -118,11 +163,36 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="rating" :max-width="$vuetify.breakpoint.thresholds.sm">
+      <v-card>
+        <v-card-title class="secondary text-overline">
+          <v-icon color="primary" class="mr-3">mdi-star</v-icon>
+          <div>Oceń</div>
+        </v-card-title>
+        <v-card-text>
+          <v-rating
+              class="mx-auto"
+              v-model="value"
+              background-color="white"
+              color="yellow accent-4"
+              dense
+              half-increments
+              hover
+              size="64"
+          ></v-rating>
+          <v-textarea v-model="description" label="Podziel się swoją opinią"></v-textarea>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text large @click="addRating()"><v-icon>mdi-plus</v-icon>Dodaj</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
 <script>
-import {getListItemsOrItem} from '@/functions/common'
+import {getListItemsOrItem, postData} from '@/functions/common'
 import dishIngridientModal from '../../dish/dishIngridientModal.vue'
 import cartButtonWithDialog from '../../cart/cartButtonWithDialog.vue'
 import cartComponent from '../../cart/cart.vue'
@@ -135,6 +205,9 @@ export default {
   },
   data() {
     return {
+      value: 4.5,
+      description: '',
+      rating: false,
       dialog: false,
       dishId: 0,
       dishIngridientModal: false,
@@ -152,7 +225,8 @@ export default {
       ],
       imageLoaded: false,
       restaurantCategoriesWithDishes: [],
-      restaurantsAddress: [{address_line_1: 'aleja Solidarności 16', address_line_2: '', city: 'Kielce', zip_code: '25-900'}]
+      restaurantsAddress: [{address_line_1: 'aleja Solidarności 16', address_line_2: '', city: 'Kielce', zip_code: '25-900'}],
+      restaurantRatings: []
     }
   },
   created() {
@@ -162,6 +236,7 @@ export default {
     if (cart) {
       this.$store.state.cart = JSON.parse(cart)
     }
+    this.getRestaurantRatings()
   },
   methods: {
     async fetchData() {
@@ -323,7 +398,31 @@ export default {
       this.$store.state.info.showing = true
       this.$store.state.modal.dishId = this.$store.state.modal.dish.dishId
       this.$store.state.modal.dishIngridientModal = true
-    }
+    },
+    async getRestaurantRatings() {
+      this.restaurantRatings = await getListItemsOrItem('restaurantRatings', this.idRestaurant)
+      if(this.restaurantRatings.length === 0) {
+        this.restaurantRatings.push({restaurantName: '', date: '', email: '', value: 0, description: 'Brak opinii o tej restauracji'})
+        this.$store.state.info.showing = false
+        this.$store.state.info.loading = false
+        this.$store.state.info.text = 'Brak ocen restauracji'
+        this.$store.state.info.color = 'info'
+        this.$store.state.info.showing = true
+      }
+    },
+    async addRating() {
+      let response = await postData('addRating', {id: this.idRestaurant, value: this.value, description: this.description}, this.$cookie.get('token'))
+      this.$store.state.info.showing = false
+      this.$store.state.info.text = response.data['message']
+      if(response.status === 201) {
+        this.$store.state.info.color = 'success'
+      } else {
+        this.$store.state.info.color = 'warning'
+      }
+      this.$store.state.info.showing = true
+      this.rating = false
+      window.location.reload(true);
+    },
   }
 }
 
