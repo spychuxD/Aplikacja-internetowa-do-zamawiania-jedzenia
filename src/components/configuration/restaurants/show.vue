@@ -487,17 +487,17 @@ export default {
       }
       this.loading = false
       this.restaurantsCategories = await getListItemsOrItem('getCategories', 0, 'api', 'admin')
-      if(!Array.isArray(this.restaurantsCategories)) {
-        this.$store.state.info.showing = false
-        this.$store.state.info.text = this.restaurantsCategories.message
-        this.$store.state.info.color = 'warning'
-        this.$store.state.info.showing = true
-        this.$cookie.delete('token')
-        setTimeout(() => {
-          this.$router.push('/home')
-          window.location.reload(true);
-        }, 1500);
-      }
+// if(!Array.isArray(this.restaurantsCategories)) {
+      //   this.$store.state.info.showing = false
+      //   this.$store.state.info.text = this.restaurantsCategories.message
+      //   this.$store.state.info.color = 'warning'
+      //   this.$store.state.info.showing = true
+      // this.$cookie.delete('token')
+      // setTimeout(() => {
+      //   this.$router.push('/home')
+      //   window.location.reload(true);
+      // }, 1500);
+      // }
     },
     newDate() {
       this.openingHoursRestaurant.push({

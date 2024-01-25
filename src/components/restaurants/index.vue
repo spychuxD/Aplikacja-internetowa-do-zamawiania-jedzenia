@@ -1,14 +1,14 @@
 <template>
     <v-container fluid>
       <v-card class="mt-3">
-<!--        <google-maps :height="300" :addresses="restaurantsAddresses"></google-maps>-->
+        <google-maps :height="300" :addresses="restaurantsAddresses"></google-maps>
       </v-card>
       <v-card :loading="loading" class="mt-3" flat>
         <v-card-title class="pa-0">
           <v-tabs v-model="tabIndex" class="secondary" fixed-tabs>
             <v-tab>Wszystkie</v-tab>
-            <v-tab>Najbliżej Ciebie</v-tab>
-            <v-tab>Najlepiej oceniane</v-tab>
+<!--            <v-tab>Najbliżej Ciebie</v-tab>-->
+<!--            <v-tab>Najlepiej oceniane</v-tab>-->
           </v-tabs>
         </v-card-title>
         <v-tabs-items v-model="tabIndex">
@@ -139,11 +139,11 @@
 <script>
 import {getListItemsOrItem, postData} from "@/functions/common";
 import axios from "axios";
-// import googleMaps from '../GoogleMaps.vue'
+import googleMaps from '../GoogleMaps.vue'
   export default {
     name: 'RestaurantIndex',
     components: {
-      // googleMaps
+      googleMaps
     },
     data() {
       return {

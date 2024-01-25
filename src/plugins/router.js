@@ -19,6 +19,7 @@ import Tracking from '../components/cartSummary/tracking'
 import PaymentSuccess from '../components/cartSummary/paymentSuccess'
 import PaymentError from '../components/cartSummary/paymentError'
 import RestaurantsRatings from '../components/ratings/index'
+import UserOrders from '../components/orders/index'
 
 Vue.use(Router);
 
@@ -126,6 +127,13 @@ export default new Router({
             title: 'Opinie restauracji'
           },
           component: RestaurantsRatings
+        },
+        {
+          path: '/orders',
+          meta: {
+            title: 'Zrealizowane zamówienia'
+          },
+          component: UserOrders
         }
       ]
     },

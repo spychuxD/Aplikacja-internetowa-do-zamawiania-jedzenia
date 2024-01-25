@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mt-3">
+  <v-card>
     <v-card-title class="secondary text-overline">
       <v-icon color="primary">mdi-cart</v-icon>
       <div class="ml-3">KOSZYK</div>

@@ -2,23 +2,23 @@
   <v-card flat>
     <v-row class="flex-column-reverse flex-sm-column-reverse flex-md-row flex-lg-row">
       <v-col class="col-lg-3 col-md-3 col-sm-12">
-        <v-card>
-          <v-card-title class="secondary text-overline">
-            <v-icon color="primary">mdi-monitor-cellphone-star</v-icon>
-            <div class="ml-3">NAJCZĘŚCIEJ ZAMAWIANE</div>
-          </v-card-title>
-          <v-card-text class="px-8 py-4" v-if="restaurant.length > 0">
-            <v-data-table
-                class="text--secondary"
-                dense
-                disable-sort
-                :headers="headers"
-                :items="restaurant"
-                :items-per-page="5"
-                :no-data-text="'Brak danych. Widocznie nikt jeszcze nie zamówił z tej restauracji. Bądź pierwszy!'"
-            ></v-data-table>
-          </v-card-text>
-        </v-card>
+<!--        <v-card>-->
+<!--          <v-card-title class="secondary text-overline">-->
+<!--            <v-icon color="primary">mdi-monitor-cellphone-star</v-icon>-->
+<!--            <div class="ml-3">NAJCZĘŚCIEJ ZAMAWIANE</div>-->
+<!--          </v-card-title>-->
+<!--          <v-card-text class="px-8 py-4" v-if="restaurant.length > 0">-->
+<!--            <v-data-table-->
+<!--                class="text&#45;&#45;secondary"-->
+<!--                dense-->
+<!--                disable-sort-->
+<!--                :headers="headers"-->
+<!--                :items="restaurant"-->
+<!--                :items-per-page="5"-->
+<!--                :no-data-text="'Brak danych. Widocznie nikt jeszcze nie zamówił z tej restauracji. Bądź pierwszy!'"-->
+<!--            ></v-data-table>-->
+<!--          </v-card-text>-->
+<!--        </v-card>-->
         <cart-component :cart="$store.state.cart" :add-item="addItem" :remove-item="removeItem" :delete-item="deleteItem"></cart-component>
       </v-col>
       <v-col class="col-lg-6 col-md-6 col-sm-12">

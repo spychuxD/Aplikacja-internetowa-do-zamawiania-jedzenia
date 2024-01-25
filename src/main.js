@@ -12,8 +12,8 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VueGeolocation from 'vue-browser-geolocation'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import googleMapsApiKey from '@/key'
-import { faUtensils, faScrewdriverWrench, faPhoneFlip, faPersonBiking, faRightToBracket, faXmark, faUser, faLocationDot, faClock, faHeart, faStar} from '@fortawesome/free-solid-svg-icons'
-library.add(faUtensils, faScrewdriverWrench, faPhoneFlip, faPersonBiking, faRightToBracket, faXmark, faUser, faLocationDot, faClock, faHeart, faStar);
+import { faUtensils, faScrewdriverWrench, faPhoneFlip, faPersonBiking, faRightToBracket, faXmark, faUser, faLocationDot, faClock, faHeart, faStar, faList} from '@fortawesome/free-solid-svg-icons'
+library.add(faUtensils, faScrewdriverWrench, faPhoneFlip, faPersonBiking, faRightToBracket, faXmark, faUser, faLocationDot, faClock, faHeart, faStar, faList);
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(VueCookie)
 Vue.use(debounce)

@@ -13,12 +13,12 @@
           :position="restaurantCoordinates"
           :clickable="true"
       />
-      <GmapMarker
-          v-if="isUserLocation"
-          :position="myCoordinates"
-          :clickable="true"
-          :icon="'https://i.ibb.co/8dgvJYX/home-account.png'"
-      />
+<!--      <GmapMarker-->
+<!--          v-if="isUserLocation"-->
+<!--          :position="myCoordinates"-->
+<!--          :clickable="true"-->
+<!--          :icon="'https://i.ibb.co/8dgvJYX/home-account.png'"-->
+<!--      />-->
       <GmapMarker
           v-if="lat && lng"
           :position="{lat: lat, lng: lng}"

@@ -266,8 +266,9 @@ import axios from "axios";
           {value: 2, text:'Dostawa', icon: 'fa-solid fa-person-biking', path: '/trackingOrder/' + localStorage.getItem('order'), roles: ['ROLE_USER'], disabled: true},
           {value: 3, text:'Kontakt', icon: 'fa-solid fa-phone-flip', path: '/test',  roles: ['ROLE_USER'], disabled: false},
           {value: 4, text:'Ulubione', icon: 'fa-solid fa-heart', path: '/favoriteRestaurants',  roles: ['ROLE_USER'], disabled: true},
-          {value: 5, text:'Oceny', icon: 'fa-solid fa-star', path: '/restaurantsRatings',  roles: ['ROLE_USER'], disabled: true},
-          {value: 6, text:'Konfiguracja', icon: 'fa-solid fa-screwdriver-wrench', path: '/config',  roles: ['ROLE_SUPERUSER'], disabled: true}
+          {value: 5, text:'Oceny', icon: 'fa-solid fa-star', path: '/restaurantsRatings',  roles: ['ROLE_USER'], disabled: false},
+          {value: 6, text:'Zamówienia', icon: 'fa-solid fa-list', path: '/orders',  roles: ['ROLE_USER'], disabled: false},
+          {value: 7, text:'Konfiguracja', icon: 'fa-solid fa-screwdriver-wrench', path: '/config',  roles: ['ROLE_SUPERUSER'], disabled: false}
         ],
         userMenu: [
           {value: 1, text:'Mój profil', path: '/restaurants'}

@@ -209,6 +209,30 @@ export async function postData(path, data, token) {
         }
         return {status: response.status, data: response.data}
     }
+    if(path === 'addMessage') {
+        let response
+        response = await axios.post('http://localhost:8000/common/addMessage/'+data.id, {
+                message: data.message,
+                sender: data.sender,
+                date: data.date
+            }
+        ).catch(reason => {
+            console.log(reason.response)
+            if(reason.response.status === 401 && reason.response.data.message === 'JWT Token not found') {
+                window.location.href = '/home'
+                return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'}
+            }
+            if(reason.response.status === 401 && reason.response.data.message === 'Expired JWT Token') {
+                window.location.href = '/home'
+                return {status: 207, data: 'Wygasł dostęp.'} //trzeba dodac refreshToken i wyrzucać do logowania
+            }
+            if(reason.response.status === 403 && reason.response.data.detail === 'Access Denied.') {
+                window.location.href = '/home'
+                return {status: 207, data: 'Nie posiadasz wymaganych uprawnień do korzystania z tej funkcji.'} //trzeba dodac refreshToken i wyrzucać do logowania
+            }
+        })
+        return {status: response.status, data: response.data}
+    }
 }
 
 export async function pay(amount, hiddenDescription, email, cart, cost, address, token = null){
@@ -327,6 +351,7 @@ export async function getListItemsOrItem(name, id = 0, state = 'common', role = 
             return 0;
         }
     } catch (error) {
+        console.log('error', error)
         if(error.response.status === 401 && error.response.data.message === 'JWT Token not found') {
             VueCookie.delete('token')
             window.location.href = '/home'
