@@ -1,4 +1,4 @@
-# web-app-vue2
+# Aplikacja internetowa do zamawiania jedzenia
 
 ## Project setup
 ```
